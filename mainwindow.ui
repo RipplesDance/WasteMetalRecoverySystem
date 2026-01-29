@@ -127,7 +127,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_7">
+                <widget class="QLabel" name="co_price">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
@@ -161,7 +161,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>铁（Li）</string>
+                  <string>铁（Fe）</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -169,7 +169,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_4">
+                <widget class="QLabel" name="fe_price">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
@@ -211,7 +211,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_6">
+                <widget class="QLabel" name="Li_price">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
@@ -253,7 +253,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_13">
+                <widget class="QLabel" name="mn_price">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
@@ -295,7 +295,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_15">
+                <widget class="QLabel" name="ni_price">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
@@ -348,14 +348,14 @@
            <number>12</number>
           </property>
           <item>
-           <widget class="QLabel" name="label_11">
+           <widget class="QLabel" name="SOH_capcity">
             <property name="font">
              <font>
               <pointsize>16</pointsize>
              </font>
             </property>
             <property name="text">
-             <string>剩余电池容量：</string>
+             <string>剩余电池容量：0%</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -363,7 +363,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="horizontalSlider">
+           <widget class="QSlider" name="SOH_bar">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -433,7 +433,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox">
+           <widget class="QComboBox" name="type_line">
             <property name="font">
              <font>
               <pointsize>16</pointsize>
@@ -446,7 +446,7 @@
         <item row="0" column="2">
          <layout class="QGridLayout" name="gridLayout">
           <item row="1" column="0">
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="weight_line">
             <property name="font">
              <font>
               <pointsize>16</pointsize>
@@ -568,7 +568,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_22">
+             <widget class="QLabel" name="SOH_price">
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
@@ -618,7 +618,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_20">
+             <widget class="QLabel" name="weight_price">
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
@@ -664,11 +664,14 @@
           </widget>
          </item>
          <item row="0" column="2">
-          <widget class="QLineEdit" name="lineEdit_2">
+          <widget class="QLineEdit" name="final_price">
            <property name="font">
             <font>
              <pointsize>14</pointsize>
             </font>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

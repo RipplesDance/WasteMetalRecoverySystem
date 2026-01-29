@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSlider>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,6 +16,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void init();
+
+    //slots
+private slots:
+    void onSlideValueChanged(int value);
+
 
 private:
     Ui::MainWindow *ui;
