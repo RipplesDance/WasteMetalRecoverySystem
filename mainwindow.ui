@@ -462,7 +462,7 @@
              </font>
             </property>
             <property name="text">
-             <string>请输入电池重量</string>
+             <string>请输入电池重量(kg)</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -479,7 +479,7 @@
          <number>6</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>12</number>
         </property>
         <property name="rightMargin">
          <number>0</number>
@@ -531,7 +531,7 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout_3" columnstretch="2,1,2,0">
+        <layout class="QGridLayout" name="gridLayout_3" columnstretch="2,1,2">
          <property name="topMargin">
           <number>12</number>
          </property>
@@ -635,33 +635,6 @@
            </layout>
           </widget>
          </item>
-         <item row="0" column="2">
-          <widget class="QDoubleSpinBox" name="doubleSpinBox">
-           <property name="font">
-            <font>
-             <pointsize>14</pointsize>
-            </font>
-           </property>
-           <property name="wrapping">
-            <bool>false</bool>
-           </property>
-           <property name="frame">
-            <bool>true</bool>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-           <property name="specialValueText">
-            <string/>
-           </property>
-           <property name="showGroupSeparator" stdset="0">
-            <bool>false</bool>
-           </property>
-           <property name="maximum">
-            <double>99999999999.990005493164063</double>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="1">
           <spacer name="horizontalSpacer_5">
            <property name="orientation">
@@ -687,6 +660,15 @@
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLineEdit" name="lineEdit_2">
+           <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+            </font>
            </property>
           </widget>
          </item>
