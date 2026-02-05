@@ -11,6 +11,10 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    void init();
+
+private slots:
+    void onSlideValueChanged(int value);
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
