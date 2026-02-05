@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     init();
-
+    fetchMetalPrice();
 }
 
 MainWindow::~MainWindow()
@@ -37,4 +37,39 @@ void MainWindow::onSlideValueChanged(int value)
 {
     QString percentage =QString::number(value) + "%";
     ui->SOH_capcity->setText("剩余电池容量："+ percentage);
+}
+
+void MainWindow::fetchMetalPrice()
+{
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    QString url = "https://api.metalpriceapi.com/v1/latest?api_key=89cd239feededd178eae6789fff5316b&base=CNY&currencies=XAG";
+    connect(manager, &QNetworkAccessManager::finished, this, &MainWindow::fetchMetalPriceSlot);
+
+    manager->get(QNetworkRequest(QUrl(url)));
+}
+
+void  MainWindow::fetchMetalPriceSlot(QNetworkReply *reply)
+{
+    if (reply->error() == QNetworkReply::NoError) {
+        QByteArray response = reply->readAll();
+        QJsonDocument doc = QJsonDocument::fromJson(response);
+        QJsonObject obj = doc.object();
+
+        // {"success":true,"base":"CNY","timestamp":1770249599,"rates":{"CNYXAG":602.9848127058,"XAG":0.0016584166}}
+        if (obj.contains("rates")) {
+            QJsonObject ratesObj = obj["rates"].toObject();
+                if (ratesObj.contains("CNYXAG")) {
+                    double xagPrice = ratesObj["CNYXAG"].toDouble();// per ounce
+                    double gramPrice = xagPrice / 31.1035;//per gram
+                    QString priceStr = QString::number(gramPrice, 'f', 2) + "/g";
+                    ui->co_price->setText(priceStr);
+                } else {
+                    qDebug() << "error: CNYXAG do not exist.";
+                }
+        }
+    } else {
+        qDebug() << "error:" << reply->errorString();
+    }
+    reply->deleteLater();
+
 }
