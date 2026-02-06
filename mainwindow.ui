@@ -364,6 +364,17 @@
           </item>
           <item>
            <widget class="QSlider" name="SOH_bar">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="singleStep">
+             <number>0</number>
+            </property>
+            <property name="pageStep">
+             <number>0</number>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>

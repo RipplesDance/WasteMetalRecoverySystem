@@ -31,6 +31,7 @@ void MainWindow::init()
     connect(ui->SOH_bar, &QSlider::valueChanged,this, &MainWindow::onSlideValueChanged);
     connect(ui->weight_line, &QLineEdit::editingFinished, this, &MainWindow::offFocus);
     connect(ui->SOH_bar, &QSlider::sliderReleased, this, &MainWindow::offFocus);
+    connect(ui->type_line, &QComboBox::currentTextChanged, this, &MainWindow::offFocus);
 }
 
 //SOH bar value changed slot
