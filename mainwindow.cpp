@@ -53,6 +53,8 @@ void MainWindow::offFocus()
 
     if(weight.isEmpty() || capcity.isEmpty())
         return;
+
+    qDebug()<<"可以计算";
 }
 
 double MainWindow::fetchNumberFromString(QString str)
