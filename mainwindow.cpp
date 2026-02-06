@@ -44,17 +44,25 @@ void MainWindow::onSlideValueChanged(int value)
 
 void MainWindow::offFocus()
 {
-    QString capcity = ui->SOH_capcity->text();
-    capcity.remove(0,7);//only percentage
-    QString weight = ui->weight_line->text();
+    QString text_SOH = ui->SOH_capcity->text();
+    text_SOH.remove(0,7);//only percentage
+
+
+    QString text_weight = ui->weight_line->text();
+
+
     QString type = ui->type_line->currentText();
 
-    qDebug()<<capcity.isEmpty() << weight.isEmpty() << type;
-
-    if(weight.isEmpty() || capcity.isEmpty())
+    if(text_weight.isEmpty() || text_SOH.isEmpty())
         return;
 
-    qDebug()<<"可以计算";
+    int weight = text_weight.toInt();
+    double SOH = text_SOH.toDouble();
+    double finalPrice = quo.quotationCaculator(type,weight, SOH, metalPriceMap);
+
+    QString str = QString::number(finalPrice,'f', 2);
+
+    ui->final_price->setText(str);
 }
 
 double MainWindow::fetchNumberFromString(QString str)
@@ -76,12 +84,12 @@ void MainWindow::getMetalPrice()
     QString co_str = ui->co_price->text();
     QString mn_str = ui->mn_price->text();
     QString ni_str = ui->ni_price->text();
-    QString fe_str = ui->fe_price->text();
+    QString cu_str = ui->cu_price->text();
 
     metalPriceMap.insert("Li", fetchNumberFromString(li_str));
     metalPriceMap.insert("Co", fetchNumberFromString(co_str));
     metalPriceMap.insert("Mn", fetchNumberFromString(mn_str));
     metalPriceMap.insert("Ni", fetchNumberFromString(ni_str));
-    metalPriceMap.insert("Fe", fetchNumberFromString(fe_str));
+    metalPriceMap.insert("Cu", fetchNumberFromString(cu_str));
     qDebug()<<metalPriceMap;
 }

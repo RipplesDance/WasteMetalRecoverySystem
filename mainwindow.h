@@ -5,6 +5,8 @@
 #include<QDebug>
 #include<QMap>
 #include <QRegularExpression>
+#include"batteryMaterialConcentration.h"
+#include"quotation.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -28,5 +30,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QMap<QString, double> metalPriceMap;
+    quotation quo;
 };
 #endif // MAINWINDOW_H
