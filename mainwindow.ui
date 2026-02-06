@@ -211,7 +211,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="li_price_2">
+                <widget class="QLabel" name="li_price">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
@@ -295,7 +295,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="ni_price_2">
+                <widget class="QLabel" name="ni_price">
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>

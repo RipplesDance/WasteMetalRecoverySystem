@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     init();
+    getMetalPrice();
 }
 
 MainWindow::~MainWindow()
@@ -52,4 +53,33 @@ void MainWindow::offFocus()
 
     if(weight.isEmpty() || capcity.isEmpty())
         return;
+}
+
+double MainWindow::fetchNumberFromString(QString str)
+{
+    QRegularExpression re("\\d+\\.?\\d*");
+    QRegularExpressionMatch match = re.match(str);
+    double price = 0.00;
+
+    if (match.hasMatch()) {
+        QString result = match.captured(0);
+        price = result.toDouble();
+    }
+    return price;
+}
+
+void MainWindow::getMetalPrice()
+{
+    QString li_str = ui->li_price->text();
+    QString co_str = ui->co_price->text();
+    QString mn_str = ui->mn_price->text();
+    QString ni_str = ui->ni_price->text();
+    QString fe_str = ui->fe_price->text();
+
+    metalPriceMap.insert("Li", fetchNumberFromString(li_str));
+    metalPriceMap.insert("Co", fetchNumberFromString(co_str));
+    metalPriceMap.insert("Mn", fetchNumberFromString(mn_str));
+    metalPriceMap.insert("Ni", fetchNumberFromString(ni_str));
+    metalPriceMap.insert("Fe", fetchNumberFromString(fe_str));
+    qDebug()<<metalPriceMap;
 }

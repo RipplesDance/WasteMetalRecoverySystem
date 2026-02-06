@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include<QDebug>
+#include<QMap>
+#include <QRegularExpression>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -13,6 +15,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     void init();
+    void getMetalPrice();
+    double fetchNumberFromString(QString str);
 
 private slots:
     void onSlideValueChanged(int value);
@@ -23,5 +27,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QMap<QString, double> metalPriceMap;
 };
 #endif // MAINWINDOW_H
