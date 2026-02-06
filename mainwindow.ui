@@ -355,7 +355,7 @@
              </font>
             </property>
             <property name="text">
-             <string>剩余电池容量：</string>
+             <string>剩余电池容量：0%</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -462,7 +462,7 @@
              </font>
             </property>
             <property name="text">
-             <string>请输入电池重量</string>
+             <string>请输入电池重量(kg)</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>

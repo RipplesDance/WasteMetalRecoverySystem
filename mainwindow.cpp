@@ -29,6 +29,8 @@ void MainWindow::init()
 
     //connect signals
     connect(ui->SOH_bar, &QSlider::valueChanged,this, &MainWindow::onSlideValueChanged);
+    connect(ui->weight_line, &QLineEdit::editingFinished, this, &MainWindow::offFocus);
+    connect(ui->SOH_bar, &QSlider::sliderReleased, this, &MainWindow::offFocus);
 }
 
 //SOH bar value changed slot
@@ -36,4 +38,17 @@ void MainWindow::onSlideValueChanged(int value)
 {
     QString percentage =QString::number(value) + "%";
     ui->SOH_capcity->setText("剩余电池容量："+ percentage);
+}
+
+void MainWindow::offFocus()
+{
+    QString capcity = ui->SOH_capcity->text();
+    capcity.remove(0,7);//only percentage
+    QString weight = ui->weight_line->text();
+    QString type = ui->type_line->currentText();
+
+    qDebug()<<capcity.isEmpty() << weight.isEmpty() << type;
+
+    if(weight.isEmpty() || capcity.isEmpty())
+        return;
 }
