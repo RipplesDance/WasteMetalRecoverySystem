@@ -24,8 +24,8 @@ void MainWindow::init()
     ui->SOH_bar->setStyle(0);
     ui->SOH_bar->setRange(0,100);
 
-    ui->type_line->addItem("磷酸铁锂电池");
     ui->type_line->addItem("钴酸锂电池");
+    ui->type_line->addItem("磷酸铁锂电池");
     ui->type_line->addItem("三元锂离子电池");
 
     //connect signals
@@ -45,8 +45,6 @@ void MainWindow::onSlideValueChanged(int value)
 void MainWindow::offFocus()
 {
     QString text_SOH = ui->SOH_capcity->text();
-    text_SOH.remove(0,7);//only percentage
-
 
     QString text_weight = ui->weight_line->text();
 
@@ -57,7 +55,8 @@ void MainWindow::offFocus()
         return;
 
     int weight = text_weight.toInt();
-    double SOH = text_SOH.toDouble();
+    double SOH = fetchNumberFromString(text_SOH) / 100;
+
     double finalPrice = quo.quotationCaculator(type,weight, SOH, metalPriceMap);
 
     QString str = QString::number(finalPrice,'f', 2);
