@@ -16,8 +16,17 @@ quotation:: ~quotation()
 
 void quotation::init()
 {
-   price_per_kilo = 15;
+   price_per_kilo = 45;
    profit = 0.2;
+
+   Li_to_LCE = 73.89/ (6.94*2); // Li₂CO₃ = 73.89, Li = 6.94
+   Ni_to_NiSo4 = 262.87/ 58.69; // 6H₂O  NiSO₄·6H₂O = 262.87, Ni = 58.69
+   Co_to_CoSo4 = 281.10/ 58.93; // 7H₂O  CoSO₄·7H₂O = 281.10, Co = 58.93
+   Mn_to_MnSo4 = 169.02/ 54.94;// 1H₂O MnSO₄·H₂O = 169.02, Mn = 54.94
+
+   qDebug()<<Li_to_LCE<<Ni_to_NiSo4;
+
+   transitionRatio = 0.8;
 }
 
 double quotation::quotationCaculator(QString type, int weight, double SOH, QMap<QString, double> metalPriceMap)
@@ -40,15 +49,17 @@ double quotation::quotationCaculator(QString type, int weight, double SOH, QMap<
 
     qDebug()<<positiveMaterial << positiveMaterialCompound;
 
-    //metal quotation
-    double li_quotation =  positiveMaterialCompound * battery->li *
-             battery->li_recycleRatio * metalPriceMap.value("Li");
-    double co_quotation = positiveMaterialCompound * battery->co *
-             battery->co_recycleRatio * metalPriceMap.value("Co");
-    double mn_quotation = positiveMaterialCompound * battery->mn *
-             battery->mn_recycleRatio * metalPriceMap.value("Mn");
-    double ni_quotation = positiveMaterialCompound * battery->ni *
-            battery->ni_recycleRatio * metalPriceMap.value("Ni");
+    //metal amount
+    double li_amount =  positiveMaterialCompound * battery->li * battery->li_recycleRatio;
+    double co_amount = positiveMaterialCompound * battery->co * battery->co_recycleRatio;
+    double mn_amount = positiveMaterialCompound * battery->mn * battery->mn_recycleRatio;
+    double ni_amount = positiveMaterialCompound * battery->ni * battery->ni_recycleRatio;
+
+    //metal price
+    double li_quotation = li_amount * Li_to_LCE * metalPriceMap.value("Li") * transitionRatio;
+    double ni_quotation = ni_amount * Ni_to_NiSo4 * metalPriceMap.value("Ni") * transitionRatio;
+    double co_quotation = co_amount * Co_to_CoSo4 * metalPriceMap.value("Co") * transitionRatio;
+    double mn_quotation = mn_amount * Mn_to_MnSo4 * metalPriceMap.value("Mn") * transitionRatio;
 
     double cu_quotation = weight * battery->cu * battery->cu_recycleRatio * metalPriceMap.value("Cu");
 

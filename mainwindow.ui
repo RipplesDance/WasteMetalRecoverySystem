@@ -119,7 +119,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>钴（Co）</string>
+                  <string>硫酸钴</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -134,7 +134,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>4564/吨</string>
+                  <string>96664/吨</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -176,7 +176,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>1300/吨</string>
+                  <string>99605/吨</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -203,7 +203,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>锂（Li）</string>
+                  <string>碳酸锂</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -218,7 +218,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>1300/吨</string>
+                  <string>136038/吨</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -245,7 +245,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>猛（Mn）</string>
+                  <string>硫酸锰</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -260,7 +260,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>4564/吨</string>
+                  <string>6940/吨</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -287,7 +287,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>镍（Ni）</string>
+                  <string>硫酸镍</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -302,7 +302,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>4564/吨</string>
+                  <string>31645/吨</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>

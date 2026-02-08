@@ -85,10 +85,10 @@ void MainWindow::getMetalPrice()
     QString ni_str = ui->ni_price->text();
     QString cu_str = ui->cu_price->text();
 
-    metalPriceMap.insert("Li", fetchNumberFromString(li_str));
-    metalPriceMap.insert("Co", fetchNumberFromString(co_str));
-    metalPriceMap.insert("Mn", fetchNumberFromString(mn_str));
-    metalPriceMap.insert("Ni", fetchNumberFromString(ni_str));
-    metalPriceMap.insert("Cu", fetchNumberFromString(cu_str));
+    metalPriceMap.insert("Li", fetchNumberFromString(li_str)/ 1000);
+    metalPriceMap.insert("Co", fetchNumberFromString(co_str)/ 1000);
+    metalPriceMap.insert("Mn", fetchNumberFromString(mn_str)/ 1000);
+    metalPriceMap.insert("Ni", fetchNumberFromString(ni_str)/ 1000);
+    metalPriceMap.insert("Cu", fetchNumberFromString(cu_str)/ 1000);
     qDebug()<<metalPriceMap;
 }
