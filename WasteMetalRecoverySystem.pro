@@ -19,12 +19,14 @@ SOURCES += \
     batteryMaterialConcentration.cpp \
     main.cpp \
     mainwindow.cpp \
-    quotation.cpp
+    quotation.cpp \
+    transaction.cpp
 
 HEADERS += \
     batteryMaterialConcentration.h \
     mainwindow.h \
-    quotation.h
+    quotation.h \
+    transaction.h
 
 FORMS += \
     mainwindow.ui

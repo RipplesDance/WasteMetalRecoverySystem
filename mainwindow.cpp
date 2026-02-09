@@ -48,21 +48,75 @@ void MainWindow::onSlideValueChanged(int value)
     QString percentage =QString::number(value) + "%";
     ui->SOH_capcity->setText("剩余电池容量："+ percentage);
 }
-
+//combo box value changed
 void MainWindow::comboBoxchanged()
 {
     init();
 }
-
+//sell button clicked
 void MainWindow::buttonClicked()
 {
-    QString text_price = ui->final_price->text();
-    double price = fetchNumberFromString(text_price);
-    if(price>0)
-        QMessageBox::information(this, "成功", "电池交易请求提交成功");
-    else
+     double weight = ui->weight_spinBox->value();
+     QString text_SOH = ui->SOH_capcity->text();
+
+    if(weight <=0.0 || text_SOH.isEmpty())
+    {
         QMessageBox::warning(this, "提示", "请先评估价格");
+        return;
+    }
+
+    double energyDensity = ui->energyDensity_spinBox->value();
+    QString type = ui->type_line->currentText();
+    double SOH = fetchNumberFromString(text_SOH) / 100;
+
+    QString text_price = ui->final_price->text();
+    text_price.chop(1);
+    double price = fetchNumberFromString(text_price);
+
+    QString usagePurpose = ui->usagePurpose->text();
+
+    //creat transaction class
+    transaction batteryDetails(type);
+    batteryDetails.setSOH(SOH);
+    batteryDetails.setPrice(price);
+    batteryDetails.setWeight(weight);
+    batteryDetails.setEnergyDensity(energyDensity);
+    batteryDetails.setUsagePurpose(usagePurpose);
+
+    //out preparation
+    QDir dir;
+    if(!dir.exists("bin/transactions"))
+        makeDirPath("bin/transactions");
+
+    QString fileName = QString("bin/transactions/%1.dat").arg(type + "_" + text_price);
+
+    qDebug()<<fileName;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::critical(this, "错误", "无法读取本地文件！");
+        return;
+    }
+
+    //start out
+    QDataStream out(&file);
+    out.setVersion(QDataStream::Qt_5_14);
+    out<< batteryDetails;
+
+    QMessageBox::information(this, "成功", "电池交易请求提交成功！");
+
     init();
+}
+
+void MainWindow::makeDirPath(QString filePath)
+{
+    QDir dir;
+    qDebug()<<filePath;
+    if (dir.mkpath(filePath)) {
+        qDebug() << "Dir created";
+    }
+
 }
 
 void MainWindow::offFocus()

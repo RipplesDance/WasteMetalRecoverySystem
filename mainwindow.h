@@ -6,8 +6,12 @@
 #include<QMap>
 #include <QRegularExpression>
 #include<QMessageBox>
+#include <QFile>
+#include<QDir>
+#include <QTextStream>
 #include"batteryMaterialConcentration.h"
 #include"quotation.h"
+#include"transaction.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,6 +27,7 @@ public:
     void init();
     void getMetalPrice();
     double fetchNumberFromString(QString str);
+    void makeDirPath(QString filePath);
 
 private slots:
     void onSlideValueChanged(int value);
