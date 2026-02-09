@@ -3,6 +3,7 @@
 
 #include<QDebug>
 #include<QMap>
+#include<QMessageBox>
 #include"batteryMaterialConcentration.h"
 
 class quotation

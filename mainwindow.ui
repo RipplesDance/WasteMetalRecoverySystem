@@ -42,7 +42,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="sellButton_offline">
           <property name="font">
            <font>
             <pointsize>16</pointsize>
@@ -67,7 +67,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="sellButton_online">
           <property name="font">
            <font>
             <pointsize>16</pointsize>
@@ -153,7 +153,7 @@
                </font>
               </property>
               <property name="text">
-               <string>电池重量报价:</string>
+               <string>电池回收用途</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -161,7 +161,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="weight_price">
+             <widget class="QLabel" name="usagePurpose">
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
@@ -203,7 +203,7 @@
                </font>
               </property>
               <property name="text">
-               <string>剩余容量报价:</string>
+               <string>剩余电量</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -211,7 +211,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="SOH_price">
+             <widget class="QLabel" name="leagcyElectricity">
               <property name="font">
                <font>
                 <pointsize>12</pointsize>

@@ -31,7 +31,11 @@ double quotation::quotationCaculator(QString type, double energyDensity, double 
                                      QMap<QString, double> metalPriceMap)
 {
     if(!batteryMap.contains(type))
+    {
+        QMessageBox::information(nullptr,"提示", "当前暂不支持该电池的报价");
         return 0.0;
+    }
+
     batteryMaterialConcentration* battery = batteryMap.value(type);
 
     if(SOH >= 0.8 && energyDensity > 0)

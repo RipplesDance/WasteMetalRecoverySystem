@@ -5,6 +5,7 @@
 #include<QDebug>
 #include<QMap>
 #include <QRegularExpression>
+#include<QMessageBox>
 #include"batteryMaterialConcentration.h"
 #include"quotation.h"
 
@@ -26,6 +27,8 @@ public:
 private slots:
     void onSlideValueChanged(int value);
     void offFocus();
+    void comboBoxchanged();
+    void buttonClicked();
 
 private:
     Ui::MainWindow *ui;

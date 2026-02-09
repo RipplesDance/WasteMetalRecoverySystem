@@ -6,6 +6,22 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ui->type_line->addItem("钴酸锂电池");
+    ui->type_line->addItem("磷酸铁锂电池");
+    ui->type_line->addItem("三元锂离子电池");
+
+    //connect signals
+    connect(ui->SOH_bar, &QSlider::valueChanged,this, &MainWindow::onSlideValueChanged);
+    connect(ui->weight_spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::offFocus);
+    connect(ui->SOH_bar, &QSlider::sliderReleased, this, &MainWindow::offFocus);
+    connect(ui->energyDensity_spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::offFocus);
+    connect(ui->type_line, &QComboBox::currentTextChanged, this, &MainWindow::comboBoxchanged);
+
+    //temporarily
+    connect(ui->sellButton_offline, &QPushButton::clicked, this, &MainWindow::buttonClicked);
+    connect(ui->sellButton_online, &QPushButton::clicked, this, &MainWindow::buttonClicked);
+
     init();
     getMetalPrice();
 }
@@ -20,21 +36,10 @@ void MainWindow::init()
     ui->weight_spinBox->setValue(0.0);
     ui->energyDensity_spinBox->setValue(0.0);
     ui->final_price->setText(0);
-    ui->weight_price->setText("未评估");
-    ui->SOH_price->setText("未评估");
+    ui->usagePurpose->setText("未评估");
+    ui->leagcyElectricity->setText("未评估");
     ui->SOH_bar->setStyle(0);
     ui->SOH_bar->setRange(0,100);
-
-    ui->type_line->addItem("钴酸锂电池");
-    ui->type_line->addItem("磷酸铁锂电池");
-    ui->type_line->addItem("三元锂离子电池");
-
-    //connect signals
-    connect(ui->SOH_bar, &QSlider::valueChanged,this, &MainWindow::onSlideValueChanged);
-    connect(ui->weight_spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::offFocus);
-    connect(ui->SOH_bar, &QSlider::sliderReleased, this, &MainWindow::offFocus);
-    connect(ui->type_line, &QComboBox::currentTextChanged, this, &MainWindow::offFocus);
-    connect(ui->energyDensity_spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::offFocus);
 }
 
 //SOH bar value changed slot
@@ -42,6 +47,22 @@ void MainWindow::onSlideValueChanged(int value)
 {
     QString percentage =QString::number(value) + "%";
     ui->SOH_capcity->setText("剩余电池容量："+ percentage);
+}
+
+void MainWindow::comboBoxchanged()
+{
+    init();
+}
+
+void MainWindow::buttonClicked()
+{
+    QString text_price = ui->final_price->text();
+    double price = fetchNumberFromString(text_price);
+    if(price>0)
+        QMessageBox::information(this, "成功", "电池交易请求提交成功");
+    else
+        QMessageBox::warning(this, "提示", "请先评估价格");
+    init();
 }
 
 void MainWindow::offFocus()
@@ -58,6 +79,15 @@ void MainWindow::offFocus()
         return;
 
     double SOH = fetchNumberFromString(text_SOH) / 100;
+    if(SOH >= 0.8 && energyDensity >0)
+        ui->usagePurpose->setText("梯次回收利用");
+    else
+        ui->usagePurpose->setText("金属回收");
+
+    if(energyDensity > 0 && SOH > 0 && weight>0)
+    {
+        ui->leagcyElectricity->setText(QString("剩余%1度电").arg(energyDensity * SOH * weight, 0, 'f', 2));
+    }
 
     double finalPrice = quo.quotationCaculator(type, energyDensity, weight, SOH, metalPriceMap);
 
