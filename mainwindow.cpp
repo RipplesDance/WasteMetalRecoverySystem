@@ -17,7 +17,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::init()
 {
-    ui->weight_line->setText(0);
+    ui->weight_spinBox->setValue(0.0);
+    ui->energyDensity_spinBox->setValue(0.0);
     ui->final_price->setText(0);
     ui->weight_price->setText("未评估");
     ui->SOH_price->setText("未评估");
@@ -30,9 +31,10 @@ void MainWindow::init()
 
     //connect signals
     connect(ui->SOH_bar, &QSlider::valueChanged,this, &MainWindow::onSlideValueChanged);
-    connect(ui->weight_line, &QLineEdit::editingFinished, this, &MainWindow::offFocus);
+    connect(ui->weight_spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::offFocus);
     connect(ui->SOH_bar, &QSlider::sliderReleased, this, &MainWindow::offFocus);
     connect(ui->type_line, &QComboBox::currentTextChanged, this, &MainWindow::offFocus);
+    connect(ui->energyDensity_spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::offFocus);
 }
 
 //SOH bar value changed slot
@@ -46,22 +48,22 @@ void MainWindow::offFocus()
 {
     QString text_SOH = ui->SOH_capcity->text();
 
-    QString text_weight = ui->weight_line->text();
+    double weight = ui->weight_spinBox->value();
 
+    double energyDensity = ui->energyDensity_spinBox->value();
 
     QString type = ui->type_line->currentText();
 
-    if(text_weight.isEmpty() || text_SOH.isEmpty())
+    if(weight <=0.0 || text_SOH.isEmpty())
         return;
 
-    int weight = text_weight.toInt();
     double SOH = fetchNumberFromString(text_SOH) / 100;
 
-    double finalPrice = quo.quotationCaculator(type,weight, SOH, metalPriceMap);
+    double finalPrice = quo.quotationCaculator(type, energyDensity, weight, SOH, metalPriceMap);
 
     QString str = QString::number(finalPrice,'f', 2);
 
-    ui->final_price->setText(str);
+    ui->final_price->setText(str + "元");
 }
 
 double MainWindow::fetchNumberFromString(QString str)

@@ -6,7 +6,7 @@ quotation::quotation()
 
     batteryMaterialConcentration* LCO = new batteryMaterialConcentration(0.071,0.602,0,0,0.1, 0.93, 0.35);
     LCO->setRecycleRatio(0.85, 0.95,0,0,0.98,0.95);
-    LCO->setProperty(150,0.3, 0.35);
+    LCO->setProperty(0.3, 0.35,45,0.2);
     batteryMap.insert("钴酸锂电池", LCO);
 }
 
@@ -16,8 +16,6 @@ quotation:: ~quotation()
 
 void quotation::init()
 {
-   price_per_kilo = 45;
-   profit = 0.2;
 
    Li_to_LCE = 73.89/ (6.94*2); // Li₂CO₃ = 73.89, Li = 6.94
    Ni_to_NiSo4 = 262.87/ 58.69; // 6H₂O  NiSO₄·6H₂O = 262.87, Ni = 58.69
@@ -29,16 +27,17 @@ void quotation::init()
    transitionRatio = 0.8;
 }
 
-double quotation::quotationCaculator(QString type, int weight, double SOH, QMap<QString, double> metalPriceMap)
+double quotation::quotationCaculator(QString type, double energyDensity, double weight, double SOH,
+                                     QMap<QString, double> metalPriceMap)
 {
     if(!batteryMap.contains(type))
         return 0.0;
     batteryMaterialConcentration* battery = batteryMap.value(type);
 
-    if(SOH >= 0.8)
+    if(SOH >= 0.8 && energyDensity > 0)
     {
         //reusable
-        double finalPrice = weight * battery->energyDensity * SOH * 0.75;
+        double finalPrice = weight * energyDensity * SOH;
         if(SOH>=0.9)
             return finalPrice * battery->unitPrice_90;
         return finalPrice * battery->unitPrice_80;
@@ -67,8 +66,8 @@ double quotation::quotationCaculator(QString type, int weight, double SOH, QMap<
 
     //final price
     double finalPrice = (li_quotation+co_quotation+mn_quotation+ni_quotation+cu_quotation)
-            - battery->otherCost - price_per_kilo * weight;
+            - battery->price_per_kilo * weight;
 
-    return finalPrice > 0 ? finalPrice* (1 - profit) : 0;
+    return finalPrice > 0 ? finalPrice* (1 - battery->profit) : 0;
 
 }

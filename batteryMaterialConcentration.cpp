@@ -21,9 +21,12 @@ void batteryMaterialConcentration::setRecycleRatio(double li_recycleRatio, doubl
     this->positiveMaterial_recycleRatio = positiveMaterial_recycleRatio;
 }
 
-void batteryMaterialConcentration::setProperty(double energyDensity, double unitPrice_80, double unitPrice_90)
+void batteryMaterialConcentration::setProperty(double unitPrice_80, double unitPrice_90,
+                                               double price_per_kilo, double profit)
 {
-    this->energyDensity = energyDensity;
     this->unitPrice_80 = unitPrice_80;
     this->unitPrice_90 = unitPrice_90;
+
+    this->price_per_kilo = price_per_kilo;
+    this->profit = profit;
 }
