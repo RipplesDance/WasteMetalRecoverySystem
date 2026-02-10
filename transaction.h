@@ -2,6 +2,8 @@
 #define TRANSACTION_H
 
 #include<QtDebug>
+#include<QDataStream>
+#include <QString>
 
 class transaction
 {
@@ -25,7 +27,15 @@ private:
     double price;
     bool isAccepted;
 
+    int classVersion = 1;
+
+
+    friend QDataStream &operator<<(QDataStream &out, const transaction &data);
+    friend QDataStream &operator>>(QDataStream &in, transaction &data);
 
 };
+
+//QDataStream &operator<<(QDataStream &out, const transaction &data);
+// QDataStream &operator>>(QDataStream &in, transaction &data);
 
 #endif // TRANSACTION_H

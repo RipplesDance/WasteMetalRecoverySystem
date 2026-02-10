@@ -38,7 +38,7 @@ void MainWindow::init()
     ui->final_price->setText(0);
     ui->usagePurpose->setText("未评估");
     ui->leagcyElectricity->setText("未评估");
-    ui->SOH_bar->setStyle(0);
+    ui->SOH_bar->setValue(0);
     ui->SOH_bar->setRange(0,100);
 }
 
@@ -102,7 +102,9 @@ void MainWindow::buttonClicked()
     //start out
     QDataStream out(&file);
     out.setVersion(QDataStream::Qt_5_14);
-    out<< batteryDetails;
+    out << batteryDetails;
+
+    file.close();
 
     QMessageBox::information(this, "成功", "电池交易请求提交成功！");
 

@@ -43,3 +43,20 @@ void transaction::setUsagePurpose(QString usagePurpose)
 {
     this->usagePurpose = usagePurpose;
 }
+ QDataStream &operator<<(QDataStream &out, const transaction &data)
+ {
+    out << data.classVersion << data.type << data.energyDensity << data.weight << data.SOH << data.price
+        << data.usagePurpose << data.isAccepted;
+    return out;
+ }
+QDataStream &operator>>(QDataStream &in, transaction &data)
+{
+    in >> data.classVersion;
+    if(data.classVersion == 1)
+    {
+        in >> data.type >> data.energyDensity >> data.weight >> data.SOH >> data.price
+                >> data.usagePurpose >> data.isAccepted;
+    }
+
+    return in;
+}

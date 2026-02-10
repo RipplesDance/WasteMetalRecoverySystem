@@ -41,7 +41,6 @@ public:
     double price_per_kilo; //include electricity fee， labor fee, and chemicals fee. Count in CNY.
     double profit;
 
-//    double otherCost = 700.0; //include disassembly fee, transportation fee, and neturalise fee. Count in CNY
 };
 
 #endif // BATTERYMATERIALCONCENTRATION_H
