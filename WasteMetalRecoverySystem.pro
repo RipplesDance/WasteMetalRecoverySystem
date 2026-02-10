@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     batteryMaterialConcentration.cpp \
+    interactableFrame.cpp \
     main.cpp \
     mainwindow.cpp \
     quotation.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
 
 HEADERS += \
     batteryMaterialConcentration.h \
+    interactableFrame.h \
     mainwindow.h \
     quotation.h \
     transaction.h

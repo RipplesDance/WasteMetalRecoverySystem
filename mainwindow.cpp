@@ -22,6 +22,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->sellButton_offline, &QPushButton::clicked, this, &MainWindow::buttonClicked);
     connect(ui->sellButton_online, &QPushButton::clicked, this, &MainWindow::buttonClicked);
 
+    //label cannot block mouse release
+    ui->transactionHistory_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+    ui->batteryInfo_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+
     init();
     getMetalPrice();
 }
@@ -132,7 +136,11 @@ void MainWindow::offFocus()
     QString type = ui->type_line->currentText();
 
     if(weight <=0.0 || text_SOH.isEmpty())
+    {
+        init();
         return;
+    }
+
 
     double SOH = fetchNumberFromString(text_SOH) / 100;
     if(SOH >= 0.8 && energyDensity >0)
