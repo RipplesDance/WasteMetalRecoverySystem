@@ -21,17 +21,20 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     quotation.cpp \
-    transaction.cpp
+    transaction.cpp \
+    transactionhistoryWidget.cpp
 
 HEADERS += \
     batteryMaterialConcentration.h \
     interactableFrame.h \
     mainwindow.h \
     quotation.h \
-    transaction.h
+    transaction.h \
+    transactionhistoryWidget.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    transactionhistoryWidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

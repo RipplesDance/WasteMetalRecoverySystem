@@ -16,15 +16,18 @@ public:
     void setPrice(double price);
     void setTpye(QString type);
     void setUsagePurpose(QString usagePurpose);
+    void setSellingWay(QString sellingWay);
     void toogleAccept();
 
 private:
     QString type;
     QString usagePurpose;
+    QString sellingWay;
     double energyDensity;
     double weight;
     double SOH;
     double price;
+
     bool isAccepted;
 
     int classVersion = 1;

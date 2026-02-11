@@ -4,14 +4,13 @@ interactableFrame::interactableFrame(QWidget *parent) : QFrame(parent)
 {
     m_bgColor = QColor(245,245,245);
     animation = new QVariantAnimation(this);
-    animation->setDuration(300);
-//    animation->setEasingCurve(QEasingCurve::InOutQuad);
-
-
     isPressed = false;
     connect(animation, &QVariantAnimation::valueChanged, [=](const QVariant &value){
             setBgColor(value.value<QColor>());
         });
+
+    this->setCursor(Qt::PointingHandCursor);
+
 }
 
 interactableFrame::~interactableFrame()
@@ -22,19 +21,19 @@ interactableFrame::~interactableFrame()
 
 void interactableFrame::enterEvent(QEvent *event)
 {
-    transition(QColor("#E1F5FE"), 200);
+    transition(QColor("#E1F5FE"), 300);
     QFrame::enterEvent(event);
 
-    this->setFrameShape(QFrame::Panel);
-    this->setFrameShadow(QFrame::Raised);
+//    this->setFrameShape(QFrame::Panel);
+//    this->setFrameShadow(QFrame::Raised);
 }
 
 void interactableFrame::leaveEvent(QEvent *event)
 {
-    transition(QColor("#F5F5F5"), 200);
+    transition(QColor("#F5F5F5"), 300);
     QFrame::leaveEvent(event);
-    this->setFrameShape(QFrame::Box);
-    this->setFrameShadow(QFrame::Sunken);
+//    this->setFrameShape(QFrame::Box);
+//    this->setFrameShadow(QFrame::Sunken);
 }
 
 void interactableFrame::mousePressEvent(QMouseEvent *event)
@@ -67,7 +66,7 @@ void interactableFrame::paintEvent(QPaintEvent *event)
         painter.setPen(QPen(QColor("#CCCCCC"), 1));
     }
 
-    painter.drawRoundedRect(this->rect().adjusted(1,1,-1,-1), 6, 6);
+    painter.drawRect(this->rect());
     QFrame::paintEvent(event);
 }
 

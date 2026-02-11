@@ -28,12 +28,13 @@ public:
     void getMetalPrice();
     double fetchNumberFromString(QString str);
     void makeDirPath(QString filePath);
+    void sellButtonClicked(QString sellingWay);
 
 private slots:
     void onSlideValueChanged(int value);
     void offFocus();
     void comboBoxchanged();
-    void buttonClicked();
+
 
 private:
     Ui::MainWindow *ui;

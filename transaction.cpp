@@ -34,6 +34,11 @@ void transaction::setTpye(QString type)
     this->type = type;
 }
 
+void transaction::setSellingWay(QString sellingWay)
+{
+    this->sellingWay = sellingWay;
+}
+
 void transaction::toogleAccept()
 {
     isAccepted = !isAccepted;
@@ -46,7 +51,7 @@ void transaction::setUsagePurpose(QString usagePurpose)
  QDataStream &operator<<(QDataStream &out, const transaction &data)
  {
     out << data.classVersion << data.type << data.energyDensity << data.weight << data.SOH << data.price
-        << data.usagePurpose << data.isAccepted;
+        << data.usagePurpose << data.sellingWay << data.isAccepted;
     return out;
  }
 QDataStream &operator>>(QDataStream &in, transaction &data)
@@ -55,7 +60,7 @@ QDataStream &operator>>(QDataStream &in, transaction &data)
     if(data.classVersion == 1)
     {
         in >> data.type >> data.energyDensity >> data.weight >> data.SOH >> data.price
-                >> data.usagePurpose >> data.isAccepted;
+                >> data.usagePurpose >> data.sellingWay >> data.isAccepted;
     }
 
     return in;

@@ -19,8 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->type_line, &QComboBox::currentTextChanged, this, &MainWindow::comboBoxchanged);
 
     //temporarily
-    connect(ui->sellButton_offline, &QPushButton::clicked, this, &MainWindow::buttonClicked);
-    connect(ui->sellButton_online, &QPushButton::clicked, this, &MainWindow::buttonClicked);
+    connect(ui->sellButton_offline, &QPushButton::clicked, [=](){sellButtonClicked("offline");});
+    connect(ui->sellButton_online, &QPushButton::clicked, [=](){sellButtonClicked("online");});
 
     //label cannot block mouse release
     ui->transactionHistory_label->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -58,7 +58,7 @@ void MainWindow::comboBoxchanged()
     init();
 }
 //sell button clicked
-void MainWindow::buttonClicked()
+void MainWindow::sellButtonClicked(QString sellingWay)
 {
      double weight = ui->weight_spinBox->value();
      QString text_SOH = ui->SOH_capcity->text();
@@ -86,6 +86,7 @@ void MainWindow::buttonClicked()
     batteryDetails.setWeight(weight);
     batteryDetails.setEnergyDensity(energyDensity);
     batteryDetails.setUsagePurpose(usagePurpose);
+    batteryDetails.setSellingWay(sellingWay);
 
     //out preparation
     QDir dir;
@@ -137,7 +138,7 @@ void MainWindow::offFocus()
 
     if(weight <=0.0 || text_SOH.isEmpty())
     {
-        init();
+        ui->final_price->setText(0);
         return;
     }
 
