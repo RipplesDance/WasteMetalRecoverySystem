@@ -594,7 +594,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_14">
          <item>
-          <widget class="interactableFrame" name="frame_12">
+          <widget class="interactableFrame" name="transactionHistory_frame">
            <property name="frameShape">
             <enum>QFrame::Box</enum>
            </property>
@@ -624,7 +624,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QFrame" name="frame_13">
+          <widget class="interactableFrame" name="batteryInfo_frame">
            <property name="frameShape">
             <enum>QFrame::Box</enum>
            </property>

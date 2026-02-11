@@ -18,7 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->energyDensity_spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::offFocus);
     connect(ui->type_line, &QComboBox::currentTextChanged, this, &MainWindow::comboBoxchanged);
 
-    //temporarily
+    connect(ui->transactionHistory_frame, &interactableFrame::clicked,[=](){this->frameClicked("transactionHistory");});
+    connect(ui->batteryInfo_frame, &interactableFrame::clicked,[=](){this->frameClicked("batteryInfo");});
+
     connect(ui->sellButton_offline, &QPushButton::clicked, [=](){sellButtonClicked("offline");});
     connect(ui->sellButton_online, &QPushButton::clicked, [=](){sellButtonClicked("online");});
 
@@ -188,4 +190,13 @@ void MainWindow::getMetalPrice()
     metalPriceMap.insert("Ni", fetchNumberFromString(ni_str)/ 1000);
     metalPriceMap.insert("Cu", fetchNumberFromString(cu_str)/ 1000);
     qDebug()<<metalPriceMap;
+}
+
+void MainWindow::frameClicked(QString frameType)
+{
+    if(frameType == "transactionHistory")
+    {
+        qDebug()<<"transactionHistory";
+
+    }
 }

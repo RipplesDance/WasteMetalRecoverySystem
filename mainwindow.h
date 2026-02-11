@@ -12,6 +12,7 @@
 #include"batteryMaterialConcentration.h"
 #include"quotation.h"
 #include"transaction.h"
+#include"transactionhistoryWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,6 +30,7 @@ public:
     double fetchNumberFromString(QString str);
     void makeDirPath(QString filePath);
     void sellButtonClicked(QString sellingWay);
+    void frameClicked(QString frameType);
 
 private slots:
     void onSlideValueChanged(int value);
@@ -36,9 +38,11 @@ private slots:
     void comboBoxchanged();
 
 
+
 private:
     Ui::MainWindow *ui;
     QMap<QString, double> metalPriceMap;
     quotation quo;
+
 };
 #endif // MAINWINDOW_H
