@@ -1,18 +1,18 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include<QMainWindow>
 #include<QDebug>
 #include<QMap>
-#include <QRegularExpression>
+#include<QRegularExpression>
 #include<QMessageBox>
-#include <QFile>
+#include<QFile>
 #include<QDir>
-#include <QTextStream>
+#include<QDataStream>
 #include"batteryMaterialConcentration.h"
 #include"quotation.h"
 #include"transaction.h"
-#include"transactionhistoryWidget.h"
+#include"transactionHistoryDialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -43,6 +43,6 @@ private:
     Ui::MainWindow *ui;
     QMap<QString, double> metalPriceMap;
     quotation quo;
-
+    transactionHistoryDialog *transactionHistory_dialog;
 };
 #endif // MAINWINDOW_H

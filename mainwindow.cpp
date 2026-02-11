@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    transactionHistory_dialog = new transactionHistoryDialog(this);
+    transactionHistory_dialog->hide();
 
     ui->type_line->addItem("钴酸锂电池");
     ui->type_line->addItem("磷酸铁锂电池");
@@ -197,6 +199,6 @@ void MainWindow::frameClicked(QString frameType)
     if(frameType == "transactionHistory")
     {
         qDebug()<<"transactionHistory";
-
+        transactionHistory_dialog->show();
     }
 }

@@ -4,11 +4,12 @@
 #include<QtDebug>
 #include<QDataStream>
 #include <QString>
+#include<QDateTime>
 
 class transaction
 {
 public:
-    transaction(QString type);
+    transaction(QString type = NULL);
     ~transaction();
     void setEnergyDensity(double energyDensity);
     void setWeight(double weight);
@@ -17,7 +18,13 @@ public:
     void setTpye(QString type);
     void setUsagePurpose(QString usagePurpose);
     void setSellingWay(QString sellingWay);
+
+
+protected:
+    void setSubmittedTime(QDateTime submittedTime);
     void toogleAccept();
+
+    void changeClassVersion(int version);
 
 private:
     QString type;
@@ -30,7 +37,11 @@ private:
 
     bool isAccepted;
 
-    int classVersion = 1;
+    QDateTime submittedTime;
+    QDateTime resultTime;
+
+
+    int classVersion;
 
 
     friend QDataStream &operator<<(QDataStream &out, const transaction &data);
