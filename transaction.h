@@ -5,20 +5,41 @@
 #include<QDataStream>
 #include <QString>
 #include<QDateTime>
+#include<QRandomGenerator>
 
 class transaction
 {
 public:
     transaction(QString type = NULL);
     ~transaction();
+
+    //set
     void setEnergyDensity(double energyDensity);
     void setWeight(double weight);
     void setSOH(double SOH);
     void setPrice(double price);
+    void setLeagcyElectricity(double leagcyElectricity);
     void setTpye(QString type);
     void setUsagePurpose(QString usagePurpose);
     void setSellingWay(QString sellingWay);
 
+    void setFilePath(QString filePath);
+
+    //quest
+    const QString getId();
+    const QString selectType();
+    const QString selectUsagePurpose();
+    const QString selectSellingWay();
+    double selectEnergyDensity();
+    double selectWeight();
+    double selectSOH();
+    double selectPrice();
+    double selectLeagcyElectricity();
+    bool checkStatus();
+    const QDateTime selectSubmittedTime();
+    const QDateTime selectResultTime();
+
+    const QString selectFilePath();
 
 protected:
     void setSubmittedTime(QDateTime submittedTime);
@@ -27,6 +48,9 @@ protected:
     void changeClassVersion(int version);
 
 private:
+    QString idGenerator();
+
+    QString id;
     QString type;
     QString usagePurpose;
     QString sellingWay;
@@ -34,15 +58,16 @@ private:
     double weight;
     double SOH;
     double price;
+    double leagcyElectricity;
 
     bool isAccepted;
 
     QDateTime submittedTime;
     QDateTime resultTime;
 
-
     int classVersion;
 
+    QString filePath;
 
     friend QDataStream &operator<<(QDataStream &out, const transaction &data);
     friend QDataStream &operator>>(QDataStream &in, transaction &data);

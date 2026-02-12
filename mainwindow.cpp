@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     transactionHistory_dialog = new transactionHistoryDialog(this);
     transactionHistory_dialog->hide();
+    connect(this, &MainWindow::newTransaction, transactionHistory_dialog,
+            &transactionHistoryDialog::onNewTransaction);
 
     ui->type_line->addItem("钴酸锂电池");
     ui->type_line->addItem("磷酸铁锂电池");
@@ -82,26 +84,27 @@ void MainWindow::sellButtonClicked(QString sellingWay)
     double price = fetchNumberFromString(text_price);
 
     QString usagePurpose = ui->usagePurpose->text();
+    double leagcyElectricity = energyDensity * SOH * weight;
 
     //creat transaction class
-    transaction batteryDetails(type);
-    batteryDetails.setSOH(SOH);
-    batteryDetails.setPrice(price);
-    batteryDetails.setWeight(weight);
-    batteryDetails.setEnergyDensity(energyDensity);
-    batteryDetails.setUsagePurpose(usagePurpose);
-    batteryDetails.setSellingWay(sellingWay);
+    transaction transactionDetails(type);
+    transactionDetails.setSOH(SOH);
+    transactionDetails.setPrice(price);
+    transactionDetails.setWeight(weight);
+    transactionDetails.setEnergyDensity(energyDensity);
+    transactionDetails.setUsagePurpose(usagePurpose);
+    transactionDetails.setSellingWay(sellingWay);
+    transactionDetails.setLeagcyElectricity(leagcyElectricity);
 
     //out preparation
     QDir dir;
     if(!dir.exists("bin/transactions"))
         makeDirPath("bin/transactions");
 
-    QString fileName = QString("bin/transactions/%1.dat").arg(type + "_" + text_price);
+    QString filePath = QString("bin/transactions/%1.dat").arg(transactionDetails.getId());
+    transactionDetails.setFilePath(filePath);
 
-    qDebug()<<fileName;
-
-    QFile file(fileName);
+    QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly))
     {
         QMessageBox::critical(this, "错误", "无法读取本地文件！");
@@ -111,10 +114,11 @@ void MainWindow::sellButtonClicked(QString sellingWay)
     //start out
     QDataStream out(&file);
     out.setVersion(QDataStream::Qt_5_14);
-    out << batteryDetails;
+    out << transactionDetails;
 
     file.close();
 
+    emit newTransaction();
     QMessageBox::information(this, "成功", "电池交易请求提交成功！");
 
     init();
@@ -123,7 +127,6 @@ void MainWindow::sellButtonClicked(QString sellingWay)
 void MainWindow::makeDirPath(QString filePath)
 {
     QDir dir;
-    qDebug()<<filePath;
     if (dir.mkpath(filePath)) {
         qDebug() << "Dir created";
     }
@@ -140,6 +143,8 @@ void MainWindow::offFocus()
 
     QString type = ui->type_line->currentText();
 
+
+
     if(weight <=0.0 || text_SOH.isEmpty())
     {
         ui->final_price->setText(0);
@@ -148,6 +153,7 @@ void MainWindow::offFocus()
 
 
     double SOH = fetchNumberFromString(text_SOH) / 100;
+    double leagcyElectricity = energyDensity * SOH * weight;
     if(SOH >= 0.8 && energyDensity >0)
         ui->usagePurpose->setText("梯次回收利用");
     else
@@ -155,7 +161,7 @@ void MainWindow::offFocus()
 
     if(energyDensity > 0 && SOH > 0 && weight>0)
     {
-        ui->leagcyElectricity->setText(QString("剩余%1度电").arg(energyDensity * SOH * weight, 0, 'f', 2));
+        ui->leagcyElectricity->setText(QString("剩余%1度电").arg(leagcyElectricity, 0, 'f', 2));
     }
 
     double finalPrice = quo.quotationCaculator(type, energyDensity, weight, SOH, metalPriceMap);
@@ -191,14 +197,12 @@ void MainWindow::getMetalPrice()
     metalPriceMap.insert("Mn", fetchNumberFromString(mn_str)/ 1000);
     metalPriceMap.insert("Ni", fetchNumberFromString(ni_str)/ 1000);
     metalPriceMap.insert("Cu", fetchNumberFromString(cu_str)/ 1000);
-    qDebug()<<metalPriceMap;
 }
 
 void MainWindow::frameClicked(QString frameType)
 {
     if(frameType == "transactionHistory")
     {
-        qDebug()<<"transactionHistory";
         transactionHistory_dialog->show();
     }
 }

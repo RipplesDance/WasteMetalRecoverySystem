@@ -37,6 +37,8 @@ private slots:
     void offFocus();
     void comboBoxchanged();
 
+signals:
+    void newTransaction();
 
 
 private:

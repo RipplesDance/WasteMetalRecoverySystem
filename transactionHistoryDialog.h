@@ -3,10 +3,13 @@
 
 #include <QDialog>
 #include<QtDebug>
+#include<QVector>
 #include<QFile>
 #include<QDir>
 #include<QDataStream>
 #include<QMessageBox>
+#include<QListWidget>
+#include<QListWidgetItem>
 #include"transaction.h"
 
 namespace Ui {
@@ -22,10 +25,17 @@ public:
     ~transactionHistoryDialog();
 
     void init();
-    void addTransactionToDialog(transaction data);
+    void updataTransaction(transaction data);
+    void updataListWidget();
+
+public slots:
+    void onNewTransaction();
+    void selectedItem(QListWidgetItem *item);
+    void sortBoxChanged(QString way);
 
 private:
     Ui::transactionHistoryDialog *ui;
+    QVector<transaction> fileVector;
 };
 
 #endif // TRANSACTIONHISTORYDIALOG_H

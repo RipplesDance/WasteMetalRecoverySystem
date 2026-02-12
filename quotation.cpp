@@ -22,8 +22,6 @@ void quotation::init()
    Co_to_CoSo4 = 281.10/ 58.93; // 7H₂O  CoSO₄·7H₂O = 281.10, Co = 58.93
    Mn_to_MnSo4 = 169.02/ 54.94;// 1H₂O MnSO₄·H₂O = 169.02, Mn = 54.94
 
-   qDebug()<<Li_to_LCE<<Ni_to_NiSo4;
-
    transitionRatio = 0.8;
 }
 
@@ -50,8 +48,6 @@ double quotation::quotationCaculator(QString type, double energyDensity, double 
     double positiveMaterial = weight * battery->positiveMaterialsRatio * battery->positiveMaterial_recycleRatio;
     double positiveMaterialCompound = positiveMaterial * battery->compoundRatio;
 
-    qDebug()<<positiveMaterial << positiveMaterialCompound;
-
     //metal amount
     double li_amount =  positiveMaterialCompound * battery->li * battery->li_recycleRatio;
     double co_amount = positiveMaterialCompound * battery->co * battery->co_recycleRatio;
@@ -65,8 +61,6 @@ double quotation::quotationCaculator(QString type, double energyDensity, double 
     double mn_quotation = mn_amount * Mn_to_MnSo4 * metalPriceMap.value("Mn") * transitionRatio;
 
     double cu_quotation = weight * battery->cu * battery->cu_recycleRatio * metalPriceMap.value("Cu");
-
-    qDebug()<<li_quotation << co_quotation<<mn_quotation<<ni_quotation<<cu_quotation;
 
     //final price
     double finalPrice = (li_quotation+co_quotation+mn_quotation+ni_quotation+cu_quotation)
