@@ -3,7 +3,7 @@
 
 #include<QtDebug>
 #include<QDataStream>
-#include <QString>
+#include<QString>
 #include<QDateTime>
 #include<QRandomGenerator>
 

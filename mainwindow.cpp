@@ -11,6 +11,18 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::newTransaction, transactionHistory_dialog,
             &transactionHistoryDialog::onNewTransaction);
 
+    socketConnectingTimer = new QTimer(this);
+    times = 0;
+    connect(socketConnectingTimer, &QTimer::timeout, this, &MainWindow::socketConnectingTimer_timeout);
+
+    //socket init
+    socket = new QTcpSocket(this);
+    connect(socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &MainWindow::socketError);
+    connect(socket, &QTcpSocket::disconnected, this, &MainWindow::socketDisconnected);
+    connect(socket,&QTcpSocket::connected,this,&MainWindow::socketConnected);
+    connect(socket, &QTcpSocket::readyRead,this,&MainWindow::msgFromServer);
+    socketConnectToServer();
+
     ui->type_line->addItem("钴酸锂电池");
     ui->type_line->addItem("磷酸铁锂电池");
     ui->type_line->addItem("三元锂离子电池");
@@ -27,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->sellButton_offline, &QPushButton::clicked, [=](){sellButtonClicked("offline");});
     connect(ui->sellButton_online, &QPushButton::clicked, [=](){sellButtonClicked("online");});
+    connect(ui->connectBtn, &QPushButton::clicked, this, &MainWindow::connectBtnClicked);
 
     //label cannot block mouse release
     ui->transactionHistory_label->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -66,6 +79,12 @@ void MainWindow::comboBoxchanged()
 //sell button clicked
 void MainWindow::sellButtonClicked(QString sellingWay)
 {
+    if(!isConnectted)
+    {
+        QMessageBox::warning(this,"警告","未连接服务器，无法发送交易!");
+        return;
+    }
+
      double weight = ui->weight_spinBox->value();
      QString text_SOH = ui->SOH_capcity->text();
 
@@ -118,8 +137,13 @@ void MainWindow::sellButtonClicked(QString sellingWay)
 
     file.close();
 
+    QByteArray block;
+    QDataStream out_server(&block, QIODevice::WriteOnly);
+    out_server << transactionDetails;
+    socket->write(block);
+    socket->flush(); //
+
     emit newTransaction();
-    QMessageBox::information(this, "成功", "电池交易请求提交成功！");
 
     init();
 }
@@ -205,4 +229,94 @@ void MainWindow::frameClicked(QString frameType)
     {
         transactionHistory_dialog->show();
     }
+}
+
+void MainWindow::updateTransaction(transaction data)
+{
+    QFile file(data.selectFilePath());
+    if(!file.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::critical(this, "错误", "无法更新订单状态！");
+        return;
+    }
+    QDataStream out(&file);
+    out.setVersion(QDataStream::Qt_5_14);
+    out << data;
+    file.close();
+}
+
+//socket-server function
+void MainWindow::socketError(QAbstractSocket::SocketError socketError)
+{
+    socketConnectingTimer->stop();
+    times = 0;
+    QMessageBox::critical(this,"错误",QString("连接远程服务器失败！错误代码:%1").arg(socketError));
+    ui->socketStatus_label->setText("未连接");
+    ui->connectBtn->setEnabled(true);
+    ui->connectBtn->setText("重新连接");
+}
+
+void MainWindow::socketDisconnected()
+{
+    ui->socketStatus_label->setText("未连接");
+    ui->connectBtn->setText("重新连接");
+}
+
+void MainWindow::socketConnected()
+{
+    isConnectted = true;
+    ui->socketStatus_label->setText("已连接");
+    ui->connectBtn->setText("断开连接");
+    socketConnectingTimer->stop();
+}
+
+void MainWindow::socketConnectToServer()
+{
+    isConnectted = false;
+    socketConnectingTimer->start(1000);
+    socket->connectToHost("127.0.0.1", 8888);
+    ui->connectBtn->setEnabled(false);
+}
+
+void MainWindow::socketConnectingTimer_timeout()
+{
+    times++;
+    if(times > 4)
+        times = 0;
+    else if (times == 1)
+        ui->socketStatus_label->setText("连接中");
+    else if (times == 2)
+        ui->socketStatus_label->setText("连接中.");
+    else if (times == 3)
+        ui->socketStatus_label->setText("连接中..");
+    else if (times == 4)
+        ui->socketStatus_label->setText("连接中...");
+}
+
+void MainWindow::connectBtnClicked()
+{
+    if(ui->connectBtn->text() == "重新连接")
+        socketConnectToServer();
+    else if(ui->connectBtn->text() == "断开连接")
+        socket->disconnectFromHost();
+}
+
+void MainWindow::msgFromServer()
+{
+    QDataStream in(socket);
+    in.setVersion(QDataStream::Qt_5_14);
+    in.startTransaction();
+
+    int order;
+    in>>order;
+
+    if(order == 1)//transaction recived
+        QMessageBox::information(this, "成功", "电池交易请求提交成功！");
+    else if(order == 2)//transaction status updated
+    {
+            transaction data;
+            in>>data;
+            updateTransaction(data);
+    }
+
 }

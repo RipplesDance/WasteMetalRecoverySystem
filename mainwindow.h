@@ -6,9 +6,12 @@
 #include<QMap>
 #include<QRegularExpression>
 #include<QMessageBox>
+#include<QTimer>
 #include<QFile>
 #include<QDir>
 #include<QDataStream>
+#include <QTcpServer>
+#include <QTcpSocket>
 #include"batteryMaterialConcentration.h"
 #include"quotation.h"
 #include"transaction.h"
@@ -31,11 +34,23 @@ public:
     void makeDirPath(QString filePath);
     void sellButtonClicked(QString sellingWay);
     void frameClicked(QString frameType);
+    void updateTransaction(transaction data);
 
-private slots:
+    void socketConnectToServer();
+
+
+public slots:
     void onSlideValueChanged(int value);
     void offFocus();
     void comboBoxchanged();
+
+    void socketError(QAbstractSocket::SocketError socketError);
+    void socketDisconnected();
+    void socketConnected();
+
+    void socketConnectingTimer_timeout();
+    void connectBtnClicked();
+    void msgFromServer();
 
 signals:
     void newTransaction();
@@ -46,5 +61,10 @@ private:
     QMap<QString, double> metalPriceMap;
     quotation quo;
     transactionHistoryDialog *transactionHistory_dialog;
+
+    QTcpSocket *socket;
+    bool isConnectted;
+    QTimer *socketConnectingTimer;
+    int times;
 };
 #endif // MAINWINDOW_H
