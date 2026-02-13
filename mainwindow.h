@@ -17,6 +17,13 @@
 #include"transaction.h"
 #include"transactionHistoryDialog.h"
 
+enum {
+    NEW_TRANSACTION = 1,
+    TRANSACTION_STATUS = 2,
+    METAL_PRICE = 3,
+    QUOTATION_CHANGE = 4
+};
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE

@@ -139,7 +139,7 @@ void MainWindow::sellButtonClicked(QString sellingWay)
 
     QByteArray block;
     QDataStream out_server(&block, QIODevice::WriteOnly);
-    out_server << transactionDetails;
+    out_server << NEW_TRANSACTION << transactionDetails;
     socket->write(block);
     socket->flush(); //
 
@@ -305,18 +305,28 @@ void MainWindow::msgFromServer()
 {
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_5_14);
-    in.startTransaction();
-
-    int order;
-    in>>order;
-
-    if(order == 1)//transaction recived
-        QMessageBox::information(this, "成功", "电池交易请求提交成功！");
-    else if(order == 2)//transaction status updated
+    while(true)
     {
+        in.startTransaction();
+
+        int order;
+        in>>order;
+
+        if(order == NEW_TRANSACTION)//transaction received
+            QMessageBox::information(this, "成功", "电池交易请求提交成功！");
+        else if(order == TRANSACTION_STATUS)//transaction status updated
+        {
             transaction data;
             in>>data;
-            updateTransaction(data);
+            if(in.commitTransaction())
+                updateTransaction(data);
+        }
+        else
+        {
+            in.rollbackTransaction();
+            break;
+        }
     }
+
 
 }
