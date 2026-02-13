@@ -8,8 +8,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     transactionHistory_dialog = new transactionHistoryDialog(this);
     transactionHistory_dialog->hide();
-    connect(this, &MainWindow::newTransaction, transactionHistory_dialog,
-            &transactionHistoryDialog::onNewTransaction);
 
     socketConnectingTimer = new QTimer(this);
     times = 0;
@@ -63,6 +61,10 @@ void MainWindow::init()
     ui->leagcyElectricity->setText("未评估");
     ui->SOH_bar->setValue(0);
     ui->SOH_bar->setRange(0,100);
+
+    QDir dir;
+    if(!dir.exists("bin/transactions"))
+        makeDirPath("bin/transactions");
 }
 
 //SOH bar value changed slot
@@ -114,16 +116,21 @@ void MainWindow::sellButtonClicked(QString sellingWay)
     transactionDetails.setUsagePurpose(usagePurpose);
     transactionDetails.setSellingWay(sellingWay);
     transactionDetails.setLeagcyElectricity(leagcyElectricity);
-
-    //out preparation
-    QDir dir;
-    if(!dir.exists("bin/transactions"))
-        makeDirPath("bin/transactions");
+    transactionDetails.setUuid(getUUID());
 
     QString filePath = QString("bin/transactions/%1.dat").arg(transactionDetails.getId());
     transactionDetails.setFilePath(filePath);
 
-    QFile file(filePath);
+    newTransaction(transactionDetails);
+
+    transactionHistory_dialog->init();
+
+    init();
+}
+
+void MainWindow::newTransaction(transaction data)
+{
+    QFile file(data.selectFilePath());
     if (!file.open(QIODevice::WriteOnly))
     {
         QMessageBox::critical(this, "错误", "无法读取本地文件！");
@@ -133,19 +140,20 @@ void MainWindow::sellButtonClicked(QString sellingWay)
     //start out
     QDataStream out(&file);
     out.setVersion(QDataStream::Qt_5_14);
-    out << transactionDetails;
+    out << data;
 
     file.close();
+    sendMsgToServer(NEW_TRANSACTION, data);
 
+}
+
+void MainWindow::sendMsgToServer(int type, transaction data)
+{
     QByteArray block;
     QDataStream out_server(&block, QIODevice::WriteOnly);
-    out_server << NEW_TRANSACTION << transactionDetails;
+    out_server << type << data;
     socket->write(block);
     socket->flush(); //
-
-    emit newTransaction();
-
-    init();
 }
 
 void MainWindow::makeDirPath(QString filePath)
@@ -245,6 +253,48 @@ void MainWindow::updateTransaction(transaction data)
     file.close();
 }
 
+QString MainWindow::getUUID() {
+    // 存储在程序根目录下的 config.ini 中
+    QSettings settings("config.ini", QSettings::IniFormat);
+    QString uuid = settings.value("Device/UUID").toString();
+
+    if (uuid.isEmpty()) {
+        // 第一次运行，生成新的 UUID
+        uuid = QUuid::createUuid().toString(); // 格式如: {7b3c...}
+        settings.setValue("Device/UUID", uuid);
+    }
+    return uuid;
+}
+
+void MainWindow::startHandshake()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_14);
+
+    out << HANDSHAKE;
+    out << getUUID();
+
+    socket->write(block);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (socket && socket->state() == QAbstractSocket::ConnectedState) {
+        socket->disconnectFromHost();
+    }
+
+        QMessageBox::StandardButton resBtn = QMessageBox::question(this, "确认", "确定要退出程序吗？",
+                                                                   QMessageBox::No | QMessageBox::Yes,
+                                                                   QMessageBox::Yes);
+        if (resBtn != QMessageBox::Yes) {
+            event->ignore();
+            return;
+        }
+
+    event->accept();
+}
+
 //socket-server function
 void MainWindow::socketError(QAbstractSocket::SocketError socketError)
 {
@@ -260,14 +310,18 @@ void MainWindow::socketDisconnected()
 {
     ui->socketStatus_label->setText("未连接");
     ui->connectBtn->setText("重新连接");
+
 }
 
 void MainWindow::socketConnected()
 {
+    startHandshake();
     isConnectted = true;
     ui->socketStatus_label->setText("已连接");
     ui->connectBtn->setText("断开连接");
+    ui->connectBtn->setEnabled(true);
     socketConnectingTimer->stop();
+//    QMessageBox::information(this,"成功","连接服务器成功！");
 }
 
 void MainWindow::socketConnectToServer()
@@ -298,7 +352,10 @@ void MainWindow::connectBtnClicked()
     if(ui->connectBtn->text() == "重新连接")
         socketConnectToServer();
     else if(ui->connectBtn->text() == "断开连接")
+    {
+        QMessageBox::critical(this,"警告","服务器断开连接！");
         socket->disconnectFromHost();
+    }
 }
 
 void MainWindow::msgFromServer()
@@ -319,7 +376,15 @@ void MainWindow::msgFromServer()
             transaction data;
             in>>data;
             if(in.commitTransaction())
+            {
                 updateTransaction(data);
+                transactionHistory_dialog->init();
+            }
+
+        }
+        else if(order == METAL_PRICE)
+        {
+            //
         }
         else
         {

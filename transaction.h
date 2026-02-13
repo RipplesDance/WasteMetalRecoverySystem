@@ -24,6 +24,7 @@ public:
     void setSellingWay(QString sellingWay);
 
     void setFilePath(QString filePath);
+    void setUuid(QString uuid);
 
     //quest
     const QString getId();
@@ -40,6 +41,7 @@ public:
     const QDateTime selectResultTime();
 
     const QString selectFilePath();
+    QString getUuid();
 
 protected:
     void setSubmittedTime(QDateTime submittedTime);
@@ -50,6 +52,7 @@ protected:
 private:
     QString idGenerator();
 
+    QString uuid;
     QString id;
     QString type;
     QString usagePurpose;

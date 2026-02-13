@@ -54,6 +54,7 @@ void transactionHistoryDialog::init()
     }
 
     sortBoxChanged(ui->sort_box->currentText());
+    updataListWidget();
 }
 
 void transactionHistoryDialog::updataTransaction(transaction data)
@@ -81,6 +82,8 @@ void transactionHistoryDialog::updataTransaction(transaction data)
     if(!result.isValid())
     {
         ui->transactionStatus_label->setText("交易状态:处理中");
+        ui->resultTime_label->setText("处理时间");
+        ui->duration_label->setText("耗时:");
         return;
     }
     ui->transactionStatus_label->setText(QString("交易状态:%1").arg(data.checkStatus()? "已完成" : "被拒绝"));
@@ -89,7 +92,7 @@ void transactionHistoryDialog::updataTransaction(transaction data)
     qint64 totalSecs = submit.secsTo(result);
     int hours = totalSecs / 3600;
     int minutes = (totalSecs % 3600) / 60;
-    ui->duration_label->setText(QString("耗时:%1时%2分").arg(hours, minutes));
+    ui->duration_label->setText(QString("耗时:%1时%2分").arg(hours).arg(minutes));
 
 
 }
@@ -103,7 +106,6 @@ void transactionHistoryDialog::selectedItem(QListWidgetItem *item)
 {
     if(!item) return;
     QString filePath = item->data(Qt::UserRole).toString();
-    qDebug()<<filePath;
 
     auto it = std::find_if(fileVector.begin(), fileVector.end(), [=](transaction d){
             return d.selectFilePath() == filePath;
@@ -149,6 +151,4 @@ void transactionHistoryDialog::sortBoxChanged(QString way)
         std::sort(fileVector.begin(), fileVector.end(),
                   [=](transaction &a, transaction &b){return a.selectPrice() < b.selectPrice();});
     }
-
-    updataListWidget();
 }

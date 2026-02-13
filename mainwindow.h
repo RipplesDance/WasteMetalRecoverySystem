@@ -6,18 +6,22 @@
 #include<QMap>
 #include<QRegularExpression>
 #include<QMessageBox>
+#include<QSettings>
+#include<QUuid>
 #include<QTimer>
 #include<QFile>
 #include<QDir>
 #include<QDataStream>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include<QCloseEvent>
 #include"batteryMaterialConcentration.h"
 #include"quotation.h"
 #include"transaction.h"
 #include"transactionHistoryDialog.h"
 
 enum {
+    HANDSHAKE = 0,
     NEW_TRANSACTION = 1,
     TRANSACTION_STATUS = 2,
     METAL_PRICE = 3,
@@ -42,9 +46,16 @@ public:
     void sellButtonClicked(QString sellingWay);
     void frameClicked(QString frameType);
     void updateTransaction(transaction data);
+    void newTransaction(transaction data);
+    void sendMsgToServer(int type, transaction data);
 
     void socketConnectToServer();
+    QString getUUID();
 
+    void startHandshake();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 public slots:
     void onSlideValueChanged(int value);

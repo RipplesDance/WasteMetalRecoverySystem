@@ -80,12 +80,17 @@ void transaction::changeClassVersion(int version)
     this->classVersion = version;
 }
 
+void transaction::setUuid(QString uuid)
+{
+    this->uuid = uuid;
+}
+
  QDataStream &operator<<(QDataStream &out, const transaction &data)
  {
 
     out << data.classVersion << data.id << data.type << data.energyDensity << data.weight << data.SOH << data.price
         << data.usagePurpose << data.leagcyElectricity << data.sellingWay << data.isAccepted
-        << data.submittedTime << data.resultTime << data.filePath;
+        << data.submittedTime << data.resultTime << data.filePath << data.uuid;
     return out;
  }
 
@@ -97,7 +102,7 @@ QDataStream &operator>>(QDataStream &in, transaction &data)
     {
         in >> data.id >> data.type >> data.energyDensity >> data.weight >> data.SOH >> data.price
                 >> data.usagePurpose >> data.leagcyElectricity >> data.sellingWay >> data.isAccepted
-                >> data.submittedTime >> data.resultTime >> data.filePath;
+                >> data.submittedTime >> data.resultTime >> data.filePath >> data.uuid;
     }
 
     return in;
@@ -116,3 +121,4 @@ bool transaction::checkStatus(){return isAccepted;}
 const QDateTime transaction::selectSubmittedTime(){return submittedTime;}
 const QDateTime transaction::selectResultTime(){return resultTime;}
 const QString transaction::selectFilePath(){return filePath;}
+QString transaction::getUuid(){return uuid;}
