@@ -19,6 +19,7 @@
 #include"quotation.h"
 #include"transaction.h"
 #include"transactionHistoryDialog.h"
+#include"metalPrice.h"
 
 enum {
     HANDSHAKE = 0,
@@ -40,7 +41,6 @@ public:
     ~MainWindow();
 
     void init();
-    void getMetalPrice();
     double fetchNumberFromString(QString str);
     void makeDirPath(QString filePath);
     void sellButtonClicked(QString sellingWay);
@@ -48,6 +48,9 @@ public:
     void updateTransaction(transaction data);
     void newTransaction(transaction data);
     void sendMsgToServer(int type, transaction data);
+    void updateMetalPrice(metalPrice data);
+    metalPrice readMetalPriceFromLocal();
+    void saveMetalPriceToLocal(metalPrice data);
 
     void socketConnectToServer();
     QString getUUID();

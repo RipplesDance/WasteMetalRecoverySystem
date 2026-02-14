@@ -44,7 +44,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->batteryInfo_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     init();
-    getMetalPrice();
+
+
 }
 
 MainWindow::~MainWindow()
@@ -65,6 +66,56 @@ void MainWindow::init()
     QDir dir;
     if(!dir.exists("bin/transactions"))
         makeDirPath("bin/transactions");
+
+    metalPrice data = readMetalPriceFromLocal();
+    if(data.isUpdated)
+        updateMetalPrice(data);
+}
+
+void MainWindow::updateMetalPrice(metalPrice data)
+{
+    ui->li_price->setText(QString::number(data.liPrice, 'f', 2) + "/吨");
+    ui->co_price->setText(QString::number(data.coPrice, 'f', 2) + "/吨");
+    ui->ni_price->setText(QString::number(data.niPrice, 'f', 2) + "/吨");
+    ui->mn_price->setText(QString::number(data.mnPrice, 'f', 2) + "/吨");
+    ui->cu_price->setText(QString::number(data.cuPrice, 'f', 2) + "/吨");
+}
+
+metalPrice MainWindow::readMetalPriceFromLocal()
+{
+    metalPriceMap.clear();
+    metalPrice metal_price;
+
+    QFile file("bin/metalPrice_CNY.dat");
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::critical(this,"错误","无法读取本地金属价格信息!");
+        return metal_price;
+    }
+
+    QDataStream in(&file);
+    in.setVersion(QDataStream::Qt_5_14);
+    in >> metal_price;
+
+    if(metal_price.isUpdated)
+    {
+        metalPriceMap.insert("Li", metal_price.liPrice/ 1000);
+        metalPriceMap.insert("Co", metal_price.coPrice/ 1000);
+        metalPriceMap.insert("Mn", metal_price.mnPrice/ 1000);
+        metalPriceMap.insert("Ni", metal_price.niPrice/ 1000);
+        metalPriceMap.insert("Cu", metal_price.cuPrice/ 1000);
+    }
+    return metal_price;
+}
+
+void MainWindow::saveMetalPriceToLocal(metalPrice data)
+{
+    QFile file("bin/metalPrice_CNY.dat");
+    if(!file.open(QIODevice::WriteOnly))
+        return;
+    QDataStream out(&file);
+    out.setVersion(QDataStream::Qt_5_14);
+    out << data;
 }
 
 //SOH bar value changed slot
@@ -216,21 +267,6 @@ double MainWindow::fetchNumberFromString(QString str)
     return price;
 }
 
-void MainWindow::getMetalPrice()
-{
-    QString li_str = ui->li_price->text();
-    QString co_str = ui->co_price->text();
-    QString mn_str = ui->mn_price->text();
-    QString ni_str = ui->ni_price->text();
-    QString cu_str = ui->cu_price->text();
-
-    metalPriceMap.insert("Li", fetchNumberFromString(li_str)/ 1000);
-    metalPriceMap.insert("Co", fetchNumberFromString(co_str)/ 1000);
-    metalPriceMap.insert("Mn", fetchNumberFromString(mn_str)/ 1000);
-    metalPriceMap.insert("Ni", fetchNumberFromString(ni_str)/ 1000);
-    metalPriceMap.insert("Cu", fetchNumberFromString(cu_str)/ 1000);
-}
-
 void MainWindow::frameClicked(QString frameType)
 {
     if(frameType == "transactionHistory")
@@ -316,12 +352,9 @@ void MainWindow::socketDisconnected()
 void MainWindow::socketConnected()
 {
     startHandshake();
-    isConnectted = true;
     ui->socketStatus_label->setText("已连接");
-    ui->connectBtn->setText("断开连接");
-    ui->connectBtn->setEnabled(true);
+    isConnectted = true;
     socketConnectingTimer->stop();
-//    QMessageBox::information(this,"成功","连接服务器成功！");
 }
 
 void MainWindow::socketConnectToServer()
@@ -351,11 +384,6 @@ void MainWindow::connectBtnClicked()
 {
     if(ui->connectBtn->text() == "重新连接")
         socketConnectToServer();
-    else if(ui->connectBtn->text() == "断开连接")
-    {
-        QMessageBox::critical(this,"警告","服务器断开连接！");
-        socket->disconnectFromHost();
-    }
 }
 
 void MainWindow::msgFromServer()
@@ -382,9 +410,18 @@ void MainWindow::msgFromServer()
             }
 
         }
-        else if(order == METAL_PRICE)
+        else if(order == METAL_PRICE) // update metal price
         {
-            //
+            metalPrice data;
+            in>>data;
+            if(in.commitTransaction())
+            {
+                if(data.isUpdated)
+                {
+                    saveMetalPriceToLocal(data);
+                    updateMetalPrice(readMetalPriceFromLocal());
+                }
+            }
         }
         else
         {
@@ -392,6 +429,4 @@ void MainWindow::msgFromServer()
             break;
         }
     }
-
-
 }

@@ -20,6 +20,7 @@ SOURCES += \
     interactableFrame.cpp \
     main.cpp \
     mainwindow.cpp \
+    metalPrice.cpp \
     quotation.cpp \
     transaction.cpp \
     transactionHistoryDialog.cpp
@@ -28,6 +29,7 @@ HEADERS += \
     batteryMaterialConcentration.h \
     interactableFrame.h \
     mainwindow.h \
+    metalPrice.h \
     quotation.h \
     transaction.h \
     transactionHistoryDialog.h
