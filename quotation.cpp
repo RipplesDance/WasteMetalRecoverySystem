@@ -6,8 +6,9 @@ quotation::quotation()
 
     batteryMaterialConcentration* LCO = new batteryMaterialConcentration(0.071,0.602,0,0,0.1, 0.93, 0.35);
     LCO->setRecycleRatio(0.85, 0.95,0,0,0.98,0.95);
-    LCO->setProperty(0.3, 0.35,45,0.2);
     batteryMap.insert("钴酸锂电池", LCO);
+
+    setProperty(0.3, 0.35,45,0.2);
 }
 
 quotation:: ~quotation()
@@ -23,6 +24,16 @@ void quotation::init()
    Mn_to_MnSo4 = 169.02/ 54.94;// 1H₂O MnSO₄·H₂O = 169.02, Mn = 54.94
 
    transitionRatio = 0.8;
+}
+
+void quotation::setProperty(double unitPrice_80, double unitPrice_90,
+                                               double price_per_kilo, double profit)
+{
+    this->unitPrice_80 = unitPrice_80;
+    this->unitPrice_90 = unitPrice_90;
+
+    this->price_per_kilo = price_per_kilo;
+    this->profit = profit;
 }
 
 double quotation::quotationCaculator(QString type, double energyDensity, double weight, double SOH,
@@ -41,8 +52,8 @@ double quotation::quotationCaculator(QString type, double energyDensity, double 
         //reusable
         double finalPrice = weight * energyDensity * SOH;
         if(SOH>=0.9)
-            return finalPrice * battery->unitPrice_90;
-        return finalPrice * battery->unitPrice_80;
+            return finalPrice * unitPrice_90;
+        return finalPrice * unitPrice_80;
     }
 
     double positiveMaterial = weight * battery->positiveMaterialsRatio * battery->positiveMaterial_recycleRatio;
@@ -64,8 +75,8 @@ double quotation::quotationCaculator(QString type, double energyDensity, double 
 
     //final price
     double finalPrice = (li_quotation+co_quotation+mn_quotation+ni_quotation+cu_quotation)
-            - battery->price_per_kilo * weight;
+            - price_per_kilo * weight;
 
-    return finalPrice > 0 ? finalPrice* (1 - battery->profit) : 0;
+    return finalPrice > 0 ? finalPrice* (1 - profit) : 0;
 
 }
