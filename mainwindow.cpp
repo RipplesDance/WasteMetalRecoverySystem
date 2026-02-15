@@ -202,7 +202,18 @@ void MainWindow::sendMsgToServer(int type, transaction data)
 {
     QByteArray block;
     QDataStream out_server(&block, QIODevice::WriteOnly);
+    out_server.setVersion(QDataStream::Qt_5_14);
     out_server << type << data;
+    socket->write(block);
+    socket->flush(); //
+}
+
+void MainWindow::sendMsgToServer(int type)
+{
+    QByteArray block;
+    QDataStream out_server(&block, QIODevice::WriteOnly);
+    out_server.setVersion(QDataStream::Qt_5_14);
+    out_server << type;
     socket->write(block);
     socket->flush(); //
 }
@@ -290,13 +301,12 @@ void MainWindow::updateTransaction(transaction data)
 }
 
 QString MainWindow::getUUID() {
-    // 存储在程序根目录下的 config.ini 中
+    //generate uuid
     QSettings settings("config.ini", QSettings::IniFormat);
     QString uuid = settings.value("Device/UUID").toString();
 
     if (uuid.isEmpty()) {
-        // 第一次运行，生成新的 UUID
-        uuid = QUuid::createUuid().toString(); // 格式如: {7b3c...}
+        uuid = QUuid::createUuid().toString();
         settings.setValue("Device/UUID", uuid);
     }
     return uuid;
@@ -421,6 +431,10 @@ void MainWindow::msgFromServer()
                     updateMetalPrice(readMetalPriceFromLocal());
                 }
             }
+        }
+        else if(order == HEART_BEAT) // test heart beat
+        {
+            sendMsgToServer(HEART_BEAT);
         }
         else
         {

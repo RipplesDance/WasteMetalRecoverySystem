@@ -6,6 +6,8 @@ batteryMaterialConcentration::batteryMaterialConcentration(double li,double co,d
 {
 
 }
+
+batteryMaterialConcentration::batteryMaterialConcentration(){}
 batteryMaterialConcentration::~batteryMaterialConcentration()
 {}
 
@@ -21,4 +23,17 @@ void batteryMaterialConcentration::setRecycleRatio(double li_recycleRatio, doubl
     this->positiveMaterial_recycleRatio = positiveMaterial_recycleRatio;
 }
 
-
+QDataStream &operator<<(QDataStream &out, const batteryMaterialConcentration &data)
+{
+    out << data.li << data.co << data.ni << data.mn << data.cu << data.compoundRatio << data.positiveMaterialsRatio
+        << data.li_recycleRatio << data.co_recycleRatio << data.ni_recycleRatio
+        << data.mn_recycleRatio << data.cu_recycleRatio << data.positiveMaterial_recycleRatio;
+    return out;
+}
+QDataStream &operator>>(QDataStream &in, batteryMaterialConcentration &data)
+{
+    in >> data.li >> data.co >> data.ni >> data.mn >> data.cu >> data.compoundRatio >> data.positiveMaterialsRatio
+        >> data.li_recycleRatio >> data.co_recycleRatio >> data.ni_recycleRatio
+        >> data.mn_recycleRatio >> data.cu_recycleRatio >> data.positiveMaterial_recycleRatio;
+    return in;
+}

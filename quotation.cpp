@@ -80,3 +80,15 @@ double quotation::quotationCaculator(QString type, double energyDensity, double 
     return finalPrice > 0 ? finalPrice* (1 - profit) : 0;
 
 }
+
+QDataStream &operator<<(QDataStream &out, const quotation &data)
+{
+    out<<data.transitionRatio << data.unitPrice_80 << data.unitPrice_90 << data.price_per_kilo << data.profit;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, quotation &data)
+{
+    in>>data.transitionRatio >> data.unitPrice_80 >> data.unitPrice_90 >> data.price_per_kilo >> data.profit;
+    return in;
+}

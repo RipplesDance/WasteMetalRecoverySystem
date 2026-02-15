@@ -26,7 +26,8 @@ enum {
     NEW_TRANSACTION = 1,
     TRANSACTION_STATUS = 2,
     METAL_PRICE = 3,
-    QUOTATION_CHANGE = 4
+    QUOTATION_DATA = 4,
+    HEART_BEAT=5
 };
 
 QT_BEGIN_NAMESPACE
@@ -48,6 +49,7 @@ public:
     void updateTransaction(transaction data);
     void newTransaction(transaction data);
     void sendMsgToServer(int type, transaction data);
+    void sendMsgToServer(int type);
     void updateMetalPrice(metalPrice data);
     metalPrice readMetalPriceFromLocal();
     void saveMetalPriceToLocal(metalPrice data);

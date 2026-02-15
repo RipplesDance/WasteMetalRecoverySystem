@@ -4,6 +4,7 @@
 #include<QDebug>
 #include<QMap>
 #include<QMessageBox>
+#include<QDataStream>
 #include"batteryMaterialConcentration.h"
 
 class quotation
@@ -16,6 +17,9 @@ public:
     void init();
     void setProperty(double unitPrice_80, double unitPrice_90,
                      double price_per_kilo, double profit);
+
+    friend QDataStream &operator<<(QDataStream &out, const quotation &data);
+    friend QDataStream &operator>>(QDataStream &in, quotation &data);
 
 private:
     QMap<QString, batteryMaterialConcentration*> batteryMap;
