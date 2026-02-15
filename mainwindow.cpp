@@ -316,18 +316,16 @@ void MainWindow::startHandshake()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "确认", "确定要退出程序吗？",
+                                                               QMessageBox::No | QMessageBox::Yes,
+                                                               QMessageBox::Yes);
+    if (resBtn != QMessageBox::Yes) {
+        event->ignore();
+        return;
+    }
     if (socket && socket->state() == QAbstractSocket::ConnectedState) {
         socket->disconnectFromHost();
     }
-
-        QMessageBox::StandardButton resBtn = QMessageBox::question(this, "确认", "确定要退出程序吗？",
-                                                                   QMessageBox::No | QMessageBox::Yes,
-                                                                   QMessageBox::Yes);
-        if (resBtn != QMessageBox::Yes) {
-            event->ignore();
-            return;
-        }
-
     event->accept();
 }
 
@@ -339,13 +337,12 @@ void MainWindow::socketError(QAbstractSocket::SocketError socketError)
     QMessageBox::critical(this,"错误",QString("连接远程服务器失败！错误代码:%1").arg(socketError));
     ui->socketStatus_label->setText("未连接");
     ui->connectBtn->setEnabled(true);
-    ui->connectBtn->setText("重新连接");
 }
 
 void MainWindow::socketDisconnected()
 {
     ui->socketStatus_label->setText("未连接");
-    ui->connectBtn->setText("重新连接");
+    ui->connectBtn->setEnabled(true);
 
 }
 
@@ -414,10 +411,12 @@ void MainWindow::msgFromServer()
         {
             metalPrice data;
             in>>data;
+            qDebug()<<"received";
             if(in.commitTransaction())
             {
                 if(data.isUpdated)
                 {
+                    qDebug()<<"updated";
                     saveMetalPriceToLocal(data);
                     updateMetalPrice(readMetalPriceFromLocal());
                 }
