@@ -74,6 +74,7 @@ public slots:
     void socketConnectingTimer_timeout();
     void connectBtnClicked();
     void msgFromServer();
+    void transactionLost();
 
 signals:
     void newTransaction();
@@ -88,6 +89,7 @@ private:
     QTcpSocket *socket;
     bool isConnectted;
     QTimer *socketConnectingTimer;
+    QTimer *transactionReceivedTimer;
     int times;
 };
 #endif // MAINWINDOW_H

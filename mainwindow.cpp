@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
     times = 0;
     connect(socketConnectingTimer, &QTimer::timeout, this, &MainWindow::socketConnectingTimer_timeout);
 
+    transactionReceivedTimer = new QTimer(this);
+    connect(transactionReceivedTimer, &QTimer::timeout, this, &MainWindow::transactionLost);
+
     //socket init
     socket = new QTcpSocket(this);
     connect(socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &MainWindow::socketError);
@@ -172,6 +175,7 @@ void MainWindow::sellButtonClicked(QString sellingWay)
     QString filePath = QString("bin/transactions/%1.dat").arg(transactionDetails.getId());
     transactionDetails.setFilePath(filePath);
 
+    transactionReceivedTimer->start(1000* 10);
     newTransaction(transactionDetails);
 
     transactionHistory_dialog->init();
@@ -284,6 +288,12 @@ void MainWindow::frameClicked(QString frameType)
     {
         transactionHistory_dialog->show();
     }
+}
+
+void MainWindow::transactionLost()
+{
+    QMessageBox::critical(this,"错误","订单无法提交！请检查服务器连接状态后重新提交！");
+    transactionReceivedTimer->stop();
 }
 
 void MainWindow::updateTransaction(transaction data)
@@ -405,7 +415,10 @@ void MainWindow::msgFromServer()
         in>>order;
 
         if(order == NEW_TRANSACTION)//transaction received
+        {
             QMessageBox::information(this, "成功", "电池交易请求提交成功！");
+            transactionReceivedTimer->stop();
+        }
         else if(order == TRANSACTION_STATUS)//transaction status updated
         {
             transaction data;
@@ -421,12 +434,10 @@ void MainWindow::msgFromServer()
         {
             metalPrice data;
             in>>data;
-            qDebug()<<"received";
             if(in.commitTransaction())
             {
                 if(data.isUpdated)
                 {
-                    qDebug()<<"updated";
                     saveMetalPriceToLocal(data);
                     updateMetalPrice(readMetalPriceFromLocal());
                 }
