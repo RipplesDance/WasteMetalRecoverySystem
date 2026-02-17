@@ -14,7 +14,8 @@ public:
     ~batteryMaterialConcentration();
 
     void setRecycleRatio(double li_recycleRatio, double co_recycleRatio, double mn_recycleRatio,
-                         double ni_recycleRatio, double cu_recycleRatio, double positiveMaterial_recycleRatio);
+                         double ni_recycleRatio, double cu_recycleRatio, double positiveMaterial_recycleRatio,
+                         double compound_recycleRatio);
 
 
     friend QDataStream &operator<<(QDataStream &out, const batteryMaterialConcentration &data);
@@ -36,6 +37,7 @@ public:
     double mn_recycleRatio;
     double ni_recycleRatio;
     double cu_recycleRatio;
+    double compound_recycleRatio;
     double positiveMaterial_recycleRatio;
 
 
