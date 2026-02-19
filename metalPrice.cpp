@@ -20,3 +20,16 @@ QDataStream &operator>>(QDataStream &in, metalPrice &data)
     in >> data.liPrice >> data.coPrice >> data.niPrice >> data.mnPrice >> data.cuPrice >> data.isUpdated;
     return in;
 }
+QDebug operator<<(QDebug dbg, const metalPrice &obj)
+{
+    QDebugStateSaver saver(dbg);
+    dbg.nospace() << "metalPrice("
+                  << "liPrice: " << obj.liPrice << ", "
+                  << "mnPrice: " << obj.mnPrice << ", "
+                  << "coPrice: " << obj.coPrice << ", "
+                  << "niPrice: " << obj.niPrice << ", "
+                  << "cuPrice: " << obj.cuPrice << ", "
+                  << "isUpdated: " << obj.isUpdated
+                  << ")";
+        return dbg;
+}

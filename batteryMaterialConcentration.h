@@ -40,6 +40,8 @@ public:
     double compound_recycleRatio;
     double positiveMaterial_recycleRatio;
 
+    //sequence
+    qint64 sequence;
 
 
 };

@@ -24,10 +24,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(socket, &QTcpSocket::readyRead,this,&MainWindow::msgFromServer);
     socketConnectToServer();
 
-    ui->type_line->addItem("钴酸锂电池");
-    ui->type_line->addItem("磷酸铁锂电池");
-    ui->type_line->addItem("三元锂离子电池");
-
     //connect signals
     connect(ui->SOH_bar, &QSlider::valueChanged,this, &MainWindow::onSlideValueChanged);
     connect(ui->weight_spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::offFocus);
@@ -66,59 +62,23 @@ void MainWindow::init()
     ui->SOH_bar->setValue(0);
     ui->SOH_bar->setRange(0,100);
 
+    //check transaction directory
     QDir dir;
     if(!dir.exists("bin/transactions"))
         makeDirPath("bin/transactions");
 
-    metalPrice data = readMetalPriceFromLocal();
-    if(data.isUpdated)
-        updateMetalPrice(data);
+    //ui init
+    QList<QString> batteries = quo.readAllBatteryType();
+    ui->type_line->addItems(QStringList(batteries));
 }
 
 void MainWindow::updateMetalPrice(metalPrice data)
 {
-    ui->li_price->setText(QString::number(data.liPrice, 'f', 2) + "/吨");
-    ui->co_price->setText(QString::number(data.coPrice, 'f', 2) + "/吨");
-    ui->ni_price->setText(QString::number(data.niPrice, 'f', 2) + "/吨");
-    ui->mn_price->setText(QString::number(data.mnPrice, 'f', 2) + "/吨");
-    ui->cu_price->setText(QString::number(data.cuPrice, 'f', 2) + "/吨");
-}
-
-metalPrice MainWindow::readMetalPriceFromLocal()
-{
-    metalPriceMap.clear();
-    metalPrice metal_price;
-
-    QFile file("bin/metalPrice_CNY.dat");
-    if(!file.open(QIODevice::ReadOnly))
-    {
-        QMessageBox::critical(this,"错误","无法读取本地金属价格信息!");
-        return metal_price;
-    }
-
-    QDataStream in(&file);
-    in.setVersion(QDataStream::Qt_5_14);
-    in >> metal_price;
-
-    if(metal_price.isUpdated)
-    {
-        metalPriceMap.insert("Li", metal_price.liPrice/ 1000);
-        metalPriceMap.insert("Co", metal_price.coPrice/ 1000);
-        metalPriceMap.insert("Mn", metal_price.mnPrice/ 1000);
-        metalPriceMap.insert("Ni", metal_price.niPrice/ 1000);
-        metalPriceMap.insert("Cu", metal_price.cuPrice/ 1000);
-    }
-    return metal_price;
-}
-
-void MainWindow::saveMetalPriceToLocal(metalPrice data)
-{
-    QFile file("bin/metalPrice_CNY.dat");
-    if(!file.open(QIODevice::WriteOnly))
-        return;
-    QDataStream out(&file);
-    out.setVersion(QDataStream::Qt_5_14);
-    out << data;
+    ui->li_price->setText(QString::number(data.liPrice, 'f', 2) + "元/吨");
+    ui->co_price->setText(QString::number(data.coPrice, 'f', 2) + "元/吨");
+    ui->ni_price->setText(QString::number(data.niPrice, 'f', 2) + "元/吨");
+    ui->mn_price->setText(QString::number(data.mnPrice, 'f', 2) + "元/吨");
+    ui->cu_price->setText(QString::number(data.cuPrice, 'f', 2) + "元/吨");
 }
 
 //SOH bar value changed slot
@@ -217,7 +177,9 @@ void MainWindow::sendMsgToServer(int type)
     QByteArray block;
     QDataStream out_server(&block, QIODevice::WriteOnly);
     out_server.setVersion(QDataStream::Qt_5_14);
-    out_server << type;
+    if(type == HEART_BEAT)
+        out_server << type;
+
     socket->write(block);
     socket->flush(); //
 }
@@ -262,7 +224,7 @@ void MainWindow::offFocus()
         ui->leagcyElectricity->setText(QString("剩余%1度电").arg(leagcyElectricity, 0, 'f', 2));
     }
 
-    double finalPrice = quo.quotationCaculator(type, energyDensity, weight, SOH, metalPriceMap);
+    double finalPrice = quo.quotationCaculator(type, energyDensity, weight, SOH);
 
     QString str = QString::number(finalPrice,'f', 2);
 
@@ -413,13 +375,41 @@ void MainWindow::msgFromServer()
 
         int order;
         in>>order;
+        QDateTime newestTime;
 
-        if(order == NEW_TRANSACTION)//transaction received
+        if(order == HANDSHAKE)    //set up initialization
+        {
+            metalPrice metal_price;
+            QList<QString> batteries_list;
+            QList<batteryMaterialConcentration> materialConcentration_list;
+            QList<recoveryCost> recoveryCost_list;
+
+            in >> metal_price >> batteries_list >> materialConcentration_list >> recoveryCost_list;
+            qDebug()<<metal_price << batteries_list;
+            if(!in.commitTransaction())
+                return;
+
+            quo.saveMetalPriceToLocal(metal_price);
+            for(int i = 0; i < batteries_list.length() && i < materialConcentration_list.length() && i < recoveryCost_list.length(); i++)
+            {
+                QString battery = batteries_list.at(i);
+                batteryMaterialConcentration* materialConcentration = new batteryMaterialConcentration(materialConcentration_list.at(i));
+                recoveryCost cost = recoveryCost_list.at(i);
+
+                quo.saveBatteryToLocal(battery,materialConcentration);
+                quo.saveRecoveryCostToLocal(battery,cost);
+            }
+            quo.readMetalPriceFromLocal();
+            quo.readAllBatteryFromLocal();
+            quo.readAllRecoveryCostFromLocal();
+
+        }
+        else if(order == NEW_TRANSACTION)   //transaction received
         {
             QMessageBox::information(this, "成功", "电池交易请求提交成功！");
             transactionReceivedTimer->stop();
         }
-        else if(order == TRANSACTION_STATUS)//transaction status updated
+        else if(order == TRANSACTION_STATUS)   //transaction status updated
         {
             transaction data;
             in>>data;
@@ -438,14 +428,51 @@ void MainWindow::msgFromServer()
             {
                 if(data.isUpdated)
                 {
-                    saveMetalPriceToLocal(data);
-                    updateMetalPrice(readMetalPriceFromLocal());
+                    quo.saveMetalPriceToLocal(data);
+                    quo.readMetalPriceFromLocal();
+                    updateMetalPrice(quo.getMetalPrice());
                 }
             }
         }
         else if(order == HEART_BEAT) // test heart beat
         {
             sendMsgToServer(HEART_BEAT);
+        }
+        else if(order == QUOTATION_DATA)//New quotation data
+        {
+            QString battery;
+            batteryMaterialConcentration materialConcentration;
+            recoveryCost cost;
+            in>>battery >> materialConcentration >> cost;
+            if(!in.commitTransaction())return;
+
+            batteryMaterialConcentration* data = new batteryMaterialConcentration(materialConcentration);
+            batteryMaterialConcentration* localData = quo.fetchMaterialConcentrationByKey(battery);
+            //check if newest
+            if(cost.sequence > quo.fetchRecoveryCostByKey(battery).sequence)
+            {
+                quo.saveRecoveryCostToLocal(battery, cost);
+                quo.changeRecoveryCostValue(battery,cost);
+            }
+
+            if(localData)
+            {
+                if(data->sequence > localData->sequence )
+                {
+                    quo.saveBatteryToLocal(battery, data);
+                    quo.changeBatteryValue(battery,data);
+                }
+                else delete data;
+            }
+            else delete data;
+        }
+        else if(order == BATTERY_REMOVED)// delete a battery
+        {
+            QString battery;
+            in>>battery;
+            if(!in.commitTransaction())return;
+            quo.removeBatteryByName(battery);
+            quo.removeBatteryFromLocal(battery);
         }
         else
         {

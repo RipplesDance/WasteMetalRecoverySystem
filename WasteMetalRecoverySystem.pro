@@ -22,6 +22,7 @@ SOURCES += \
     mainwindow.cpp \
     metalPrice.cpp \
     quotation.cpp \
+    recoveryCost.cpp \
     transaction.cpp \
     transactionHistoryDialog.cpp
 
@@ -31,6 +32,7 @@ HEADERS += \
     mainwindow.h \
     metalPrice.h \
     quotation.h \
+    recoveryCost.h \
     transaction.h \
     transactionHistoryDialog.h
 

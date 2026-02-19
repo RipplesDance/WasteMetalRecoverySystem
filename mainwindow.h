@@ -15,11 +15,13 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include<QCloseEvent>
+#include<QList>
 #include"batteryMaterialConcentration.h"
 #include"quotation.h"
 #include"transaction.h"
 #include"transactionHistoryDialog.h"
 #include"metalPrice.h"
+#include"recoveryCost.h"
 
 enum {
     HANDSHAKE = 0,
@@ -27,7 +29,10 @@ enum {
     TRANSACTION_STATUS = 2,
     METAL_PRICE = 3,
     QUOTATION_DATA = 4,
-    HEART_BEAT=5
+    HEART_BEAT = 5,
+    BATTERY_REMOVED = 6,
+    BATTERY_ADDED = 7,
+    MESSAGE = 8
 };
 
 QT_BEGIN_NAMESPACE
@@ -51,8 +56,8 @@ public:
     void sendMsgToServer(int type, transaction data);
     void sendMsgToServer(int type);
     void updateMetalPrice(metalPrice data);
-    metalPrice readMetalPriceFromLocal();
-    void saveMetalPriceToLocal(metalPrice data);
+//    metalPrice readMetalPriceFromLocal();
+//    void saveMetalPriceToLocal(metalPrice data);
 
     void socketConnectToServer();
     QString getUUID();

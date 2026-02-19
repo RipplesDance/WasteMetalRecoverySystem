@@ -6,6 +6,7 @@
 #include <QVariantAnimation>
 #include<QPainter>
 #include<QDebug>
+#include<QLabel>
 #include<QMouseEvent>
 
 class interactableFrame : public QFrame
