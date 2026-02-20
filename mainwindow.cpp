@@ -66,10 +66,38 @@ void MainWindow::init()
     QDir dir;
     if(!dir.exists("bin/transactions"))
         makeDirPath("bin/transactions");
+}
 
-    //ui init
+void MainWindow::updateTypeComboBox()
+{
+    ui->type_line->clear();
+
     QList<QString> batteries = quo.readAllBatteryType();
-    ui->type_line->addItems(QStringList(batteries));
+    qDebug()<<batteries;
+    for(auto battery : batteries)
+    {
+        qDebug()<<quo.fetchRecoveryCostByKey(battery).isUpdated;
+        if(quo.fetchRecoveryCostByKey(battery).isUpdated)
+            ui->type_line->addItem(battery);
+    }
+}
+
+bool MainWindow::clearDir(QString dirPath)
+{
+    QDir dir(dirPath);
+        if (!dir.exists()) {
+            return false;
+        }
+
+        QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files);
+
+        bool success = true;
+        for (const QFileInfo &entryInfo : entries) {
+            if (!QFile::remove(entryInfo.absoluteFilePath())) {
+                success = false;
+            }
+        }
+        return success;
 }
 
 void MainWindow::updateMetalPrice(metalPrice data)
@@ -385,10 +413,15 @@ void MainWindow::msgFromServer()
             QList<recoveryCost> recoveryCost_list;
 
             in >> metal_price >> batteries_list >> materialConcentration_list >> recoveryCost_list;
-            qDebug()<<metal_price << batteries_list;
+
             if(!in.commitTransaction())
                 return;
 
+            //clear dir
+            clearDir("bin/quotation_model/recoveryCost");
+            clearDir("bin/quotation_model/battery");
+
+            qDebug()<<metal_price << batteries_list<<recoveryCost_list.length() << recoveryCost_list;
             quo.saveMetalPriceToLocal(metal_price);
             for(int i = 0; i < batteries_list.length() && i < materialConcentration_list.length() && i < recoveryCost_list.length(); i++)
             {
@@ -402,6 +435,10 @@ void MainWindow::msgFromServer()
             quo.readMetalPriceFromLocal();
             quo.readAllBatteryFromLocal();
             quo.readAllRecoveryCostFromLocal();
+
+            //init for refreshing comboBox items
+            updateTypeComboBox();
+            updateMetalPrice(metal_price);
 
         }
         else if(order == NEW_TRANSACTION)   //transaction received
@@ -445,26 +482,23 @@ void MainWindow::msgFromServer()
             recoveryCost cost;
             in>>battery >> materialConcentration >> cost;
             if(!in.commitTransaction())return;
-
             batteryMaterialConcentration* data = new batteryMaterialConcentration(materialConcentration);
-            batteryMaterialConcentration* localData = quo.fetchMaterialConcentrationByKey(battery);
-            //check if newest
-            if(cost.sequence > quo.fetchRecoveryCostByKey(battery).sequence)
+            if(cost.isUpdated)
             {
-                quo.saveRecoveryCostToLocal(battery, cost);
                 quo.changeRecoveryCostValue(battery,cost);
+                quo.changeBatteryValue(battery,data);
+                updateTypeComboBox();
+                QMessageBox::information(this,"提示","收到服务器的新消息：电池材料["+battery+"]报价参数已修改！");
             }
-
-            if(localData)
+            else
             {
-                if(data->sequence > localData->sequence )
-                {
-                    quo.saveBatteryToLocal(battery, data);
-                    quo.changeBatteryValue(battery,data);
-                }
-                else delete data;
+
+                quo.addRecoveryCost(battery, cost);
+                quo.addBatteryType(battery,data);
             }
-            else delete data;
+            quo.saveRecoveryCostToLocal(battery, cost);
+            quo.saveBatteryToLocal(battery, data);
+
         }
         else if(order == BATTERY_REMOVED)// delete a battery
         {
@@ -473,6 +507,34 @@ void MainWindow::msgFromServer()
             if(!in.commitTransaction())return;
             quo.removeBatteryByName(battery);
             quo.removeBatteryFromLocal(battery);
+
+            if(quo.fetchRecoveryCostByKey(battery).isUpdated)
+            {
+                updateTypeComboBox();
+                QMessageBox::information(this,"提示","收到服务器的新消息：["+battery+"]被移除！");
+            }
+
+        }
+        else if(order == BATTERY_CHANGED)
+        {
+            QString oldKey;
+            QString newKey;
+            in>>oldKey>>newKey;
+
+            if(!in.commitTransaction()||oldKey.isEmpty() || newKey.isEmpty())return;
+
+            quo.changeBatteryNameKey(newKey,oldKey);
+            quo.changeRecoveryCostKey(newKey,oldKey);
+
+            quo.renameLocalBattery(oldKey,newKey);
+            quo.renameLocalRecoveryCost(oldKey,newKey);
+
+            if(quo.fetchRecoveryCostByKey(oldKey).isUpdated)
+            {
+                updateTypeComboBox();
+                QMessageBox::information(this,"提示","收到服务器的新消息：["+oldKey+"]改名为["+newKey+"]！");
+            }
+
         }
         else
         {

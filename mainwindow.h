@@ -31,7 +31,7 @@ enum {
     QUOTATION_DATA = 4,
     HEART_BEAT = 5,
     BATTERY_REMOVED = 6,
-    BATTERY_ADDED = 7,
+    BATTERY_CHANGED = 7,
     MESSAGE = 8
 };
 
@@ -56,6 +56,8 @@ public:
     void sendMsgToServer(int type, transaction data);
     void sendMsgToServer(int type);
     void updateMetalPrice(metalPrice data);
+    void updateTypeComboBox();
+    bool clearDir(QString dirPath);
 //    metalPrice readMetalPriceFromLocal();
 //    void saveMetalPriceToLocal(metalPrice data);
 

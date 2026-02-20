@@ -13,7 +13,7 @@ recoveryCost::recoveryCost()
     this->CoSo4_transitionRatio = 0;
     this->MnSo4_transitionRatio = 0;
 
-    sequence = 0;
+    isUpdated= false;
 }
 recoveryCost::~recoveryCost(){}
 
@@ -39,14 +39,14 @@ void recoveryCost::setProperty(double unitPrice_80, double unitPrice_90,
 QDataStream &operator<<(QDataStream &out, const recoveryCost &data)
 {
     out<<data.unitPrice_80<<data.unitPrice_90<<data.price_per_kilo<<data.profit << data.LCE_transitionRatio
-      << data.CoSo4_transitionRatio << data.NiSo4_transitionRatio << data.MnSo4_transitionRatio << data.sequence;
+      << data.CoSo4_transitionRatio << data.NiSo4_transitionRatio << data.MnSo4_transitionRatio << data.isUpdated;
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in, recoveryCost &data)
 {
     in >>data.unitPrice_80>>data.unitPrice_90>>data.price_per_kilo>>data.profit>> data.LCE_transitionRatio
-       >> data.CoSo4_transitionRatio >> data.NiSo4_transitionRatio >> data.MnSo4_transitionRatio >> data.sequence;
+       >> data.CoSo4_transitionRatio >> data.NiSo4_transitionRatio >> data.MnSo4_transitionRatio >> data.isUpdated;
     return in;
 }
 
@@ -62,6 +62,7 @@ QDebug operator<<(QDebug dbg, const recoveryCost &obj)
                   << "CoSo4_transitionRatio: " << obj.CoSo4_transitionRatio << ", "
                   << "NiSo4_transitionRatio: " << obj.NiSo4_transitionRatio << ", "
                   << "MnSo4_transitionRatio: " << obj.MnSo4_transitionRatio << ", "
+                     << "MnSo4_transitionRatio: " << obj.isUpdated << ""
                   << ")";
         return dbg;
 }

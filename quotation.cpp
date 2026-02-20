@@ -89,8 +89,8 @@ bool quotation::changeRecoveryCostKey(QString newKey, QString oldKey)
     if(!recoveryCostMap.contains(oldKey)) return false;
     if(recoveryCostMap.contains(newKey)) return false;
 
-    recoveryCost cost = recoveryCostMap.take(newKey);
-    recoveryCostMap.insert(newKey, cost);
+    recoveryCostMap.insert(newKey, fetchRecoveryCostByKey(oldKey));
+    recoveryCostMap.remove(oldKey);
 
     return  true;
 }
@@ -101,7 +101,6 @@ bool quotation::removeBatteryByName(QString key)
         return false;
     }
     delete batteryMap.take(key); //delete original value
-    batteryMap.remove(key);
     return true;
 }
 
