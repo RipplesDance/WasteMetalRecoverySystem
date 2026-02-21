@@ -22,6 +22,8 @@
 #include"transactionHistoryDialog.h"
 #include"metalPrice.h"
 #include"recoveryCost.h"
+#include"settingDialog.h"
+#include"clientSetting.h"
 
 enum {
     HANDSHAKE = 0,
@@ -63,8 +65,9 @@ public:
 
     void socketConnectToServer();
     QString getUUID();
-
+    void resizeWindow();
     void startHandshake();
+    bool dirPathChanged(QString oldPath, QString newPath);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -79,10 +82,12 @@ public slots:
     void socketConnected();
 
     void socketConnectingTimer_timeout();
+    void connectToServerTimer_timeout();
     void connectBtnClicked();
     void msgFromServer();
     void transactionLost();
 
+    void onNewSetting(clientSetting setting);
 signals:
     void newTransaction();
 
@@ -91,12 +96,20 @@ private:
     Ui::MainWindow *ui;
     QMap<QString, double> metalPriceMap;
     quotation quo;
-    transactionHistoryDialog *transactionHistory_dialog;
 
+    //extra dialog
+    transactionHistoryDialog *transactionHistory_dialog;
+    settingDialog* setting_dialog;
+
+    //client parameters
     QTcpSocket *socket;
     bool isConnectted;
     QTimer *socketConnectingTimer;
     QTimer *transactionReceivedTimer;
+    QTimer *connectToServerTimer;
     int times;
+
+    //setting
+    clientSetting setting;
 };
 #endif // MAINWINDOW_H

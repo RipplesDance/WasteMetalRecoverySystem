@@ -6,15 +6,24 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //dialog init
     transactionHistory_dialog = new transactionHistoryDialog(this);
     transactionHistory_dialog->hide();
 
+    setting_dialog = new settingDialog(this);
+    setting_dialog->hide();
+    connect(setting_dialog,&settingDialog::settingChanged,this,&MainWindow::onNewSetting);
+
+    //timer init
     socketConnectingTimer = new QTimer(this);
     times = 0;
     connect(socketConnectingTimer, &QTimer::timeout, this, &MainWindow::socketConnectingTimer_timeout);
 
     transactionReceivedTimer = new QTimer(this);
     connect(transactionReceivedTimer, &QTimer::timeout, this, &MainWindow::transactionLost);
+
+    connectToServerTimer = new QTimer(this);
+    connect(connectToServerTimer, &QTimer::timeout, this, &MainWindow::connectToServerTimer_timeout);
 
     //socket init
     socket = new QTcpSocket(this);
@@ -32,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->type_line, &QComboBox::currentTextChanged, this, &MainWindow::comboBoxchanged);
 
     connect(ui->transactionHistory_frame, &interactableFrame::clicked,[=](){this->frameClicked("transactionHistory");});
-    connect(ui->batteryInfo_frame, &interactableFrame::clicked,[=](){this->frameClicked("batteryInfo");});
+    connect(ui->setting_frame, &interactableFrame::clicked,[=](){this->frameClicked("setting");});
 
     connect(ui->sellButton_offline, &QPushButton::clicked, [=](){sellButtonClicked("offline");});
     connect(ui->sellButton_online, &QPushButton::clicked, [=](){sellButtonClicked("online");});
@@ -42,8 +51,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->transactionHistory_label->setAttribute(Qt::WA_TransparentForMouseEvents);
     ui->batteryInfo_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
+    setting = setting_dialog->readSettingFromLocal();
+    resizeWindow();
     init();
-
+    updateTypeComboBox();
+    updateMetalPrice(quo.getMetalPrice());
 
 }
 
@@ -64,8 +76,13 @@ void MainWindow::init()
 
     //check transaction directory
     QDir dir;
-    if(!dir.exists("bin/transactions"))
-        makeDirPath("bin/transactions");
+    if(!dir.exists(setting.transactionPath))
+        makeDirPath(setting.transactionPath);
+}
+
+void MainWindow::resizeWindow()
+{
+    this->resize(setting.width,setting.height);
 }
 
 void MainWindow::updateTypeComboBox()
@@ -73,10 +90,8 @@ void MainWindow::updateTypeComboBox()
     ui->type_line->clear();
 
     QList<QString> batteries = quo.readAllBatteryType();
-    qDebug()<<batteries;
     for(auto battery : batteries)
     {
-        qDebug()<<quo.fetchRecoveryCostByKey(battery).isUpdated;
         if(quo.fetchRecoveryCostByKey(battery).isUpdated)
             ui->type_line->addItem(battery);
     }
@@ -160,7 +175,7 @@ void MainWindow::sellButtonClicked(QString sellingWay)
     transactionDetails.setLeagcyElectricity(leagcyElectricity);
     transactionDetails.setUuid(getUUID());
 
-    QString filePath = QString("bin/transactions/%1.dat").arg(transactionDetails.getId());
+    QString filePath = QString(setting.transactionPath +"/%1.dat").arg(transactionDetails.getId());
     transactionDetails.setFilePath(filePath);
 
     transactionReceivedTimer->start(1000* 10);
@@ -188,6 +203,19 @@ void MainWindow::newTransaction(transaction data)
     file.close();
     sendMsgToServer(NEW_TRANSACTION, data);
 
+}
+
+void MainWindow::onNewSetting(clientSetting setting)
+{
+    if(setting.transactionPath != this->setting.transactionPath)
+        dirPathChanged(this->setting.transactionPath,setting.transactionPath);
+
+    if(setting.width != this->setting.width || setting.height != this->setting.height)
+    {
+        this->setting = setting;
+        resizeWindow();
+    }
+    this->setting = setting;
 }
 
 void MainWindow::sendMsgToServer(int type, transaction data)
@@ -278,6 +306,11 @@ void MainWindow::frameClicked(QString frameType)
     {
         transactionHistory_dialog->show();
     }
+    else if(frameType == "setting")
+    {
+        setting_dialog->show();
+        setting_dialog->setDefult(setting);
+    }
 }
 
 void MainWindow::transactionLost()
@@ -312,6 +345,31 @@ QString MainWindow::getUUID() {
     return uuid;
 }
 
+bool MainWindow::dirPathChanged(QString oldPath, QString newPath)
+{
+    QDir oldDir(oldPath);
+        if (!oldDir.exists()) return false;
+
+        if(!QDir().exists(newPath))
+            QDir().mkpath(newPath);
+
+        QStringList files = oldDir.entryList(QDir::Files);
+
+        for (const QString &fileName : files) {
+            QString oldFile = oldPath + "/" + fileName;
+            QString newFile = newPath + "/" + fileName;
+
+            if (QFile::exists(newFile)) {
+                QFile::remove(newFile);
+            }
+
+            if (!QFile::rename(oldFile, newFile)) {
+                qDebug() << "文件移动失败: " << fileName;
+            }
+        }
+        return true;
+}
+
 void MainWindow::startHandshake()
 {
     QByteArray block;
@@ -342,6 +400,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 //socket-server function
 void MainWindow::socketError(QAbstractSocket::SocketError socketError)
 {
+    connectToServerTimer->stop();
     socketConnectingTimer->stop();
     times = 0;
     QMessageBox::critical(this,"错误",QString("连接远程服务器失败！错误代码:%1").arg(socketError));
@@ -362,14 +421,29 @@ void MainWindow::socketConnected()
     ui->socketStatus_label->setText("已连接");
     isConnectted = true;
     socketConnectingTimer->stop();
+    connectToServerTimer->stop();
 }
 
 void MainWindow::socketConnectToServer()
 {
     isConnectted = false;
     socketConnectingTimer->start(1000);
-    socket->connectToHost("127.0.0.1", 8888);
+    socket->connectToHost(setting.ip, setting.port);
     ui->connectBtn->setEnabled(false);
+    connectToServerTimer->start(1000 * setting.waittingTime);
+}
+
+void MainWindow::connectToServerTimer_timeout()
+{
+    connectToServerTimer->stop();
+    socketConnectingTimer->stop();
+    times = 0;
+    if (socket->state() != QAbstractSocket::ConnectedState) {
+            socket->abort(); // 强制终止连接尝试
+            ui->socketStatus_label->setText("未连接");
+            ui->connectBtn->setEnabled(true);
+            QMessageBox::warning(this,"警告","服务器无法连接，请检查服务器ip是否配置正确！");
+        }
 }
 
 void MainWindow::socketConnectingTimer_timeout()
@@ -421,7 +495,6 @@ void MainWindow::msgFromServer()
             clearDir("bin/quotation_model/recoveryCost");
             clearDir("bin/quotation_model/battery");
 
-            qDebug()<<metal_price << batteries_list<<recoveryCost_list.length() << recoveryCost_list;
             quo.saveMetalPriceToLocal(metal_price);
             for(int i = 0; i < batteries_list.length() && i < materialConcentration_list.length() && i < recoveryCost_list.length(); i++)
             {

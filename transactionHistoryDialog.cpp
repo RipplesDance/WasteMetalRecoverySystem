@@ -54,7 +54,6 @@ void transactionHistoryDialog::init()
     }
 
     sortBoxChanged(ui->sort_box->currentText());
-    updataListWidget();
 }
 
 void transactionHistoryDialog::updataTransaction(transaction data)
@@ -151,4 +150,5 @@ void transactionHistoryDialog::sortBoxChanged(QString way)
         std::sort(fileVector.begin(), fileVector.end(),
                   [=](transaction &a, transaction &b){return a.selectPrice() < b.selectPrice();});
     }
+    updataListWidget();
 }

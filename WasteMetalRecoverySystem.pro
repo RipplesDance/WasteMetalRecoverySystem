@@ -17,27 +17,32 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     batteryMaterialConcentration.cpp \
+    clientSetting.cpp \
     interactableFrame.cpp \
     main.cpp \
     mainwindow.cpp \
     metalPrice.cpp \
     quotation.cpp \
     recoveryCost.cpp \
+    settingDialog.cpp \
     transaction.cpp \
     transactionHistoryDialog.cpp
 
 HEADERS += \
     batteryMaterialConcentration.h \
+    clientSetting.h \
     interactableFrame.h \
     mainwindow.h \
     metalPrice.h \
     quotation.h \
     recoveryCost.h \
+    settingDialog.h \
     transaction.h \
     transactionHistoryDialog.h
 
 FORMS += \
     mainwindow.ui \
+    settingDialog.ui \
     transactionHistoryDialog.ui
 
 # Default rules for deployment.
