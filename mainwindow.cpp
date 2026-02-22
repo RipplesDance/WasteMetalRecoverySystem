@@ -51,7 +51,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->transactionHistory_label->setAttribute(Qt::WA_TransparentForMouseEvents);
     ui->batteryInfo_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
+    //setting loaded
     setting = setting_dialog->readSettingFromLocal();
+    transactionHistory_dialog->filePath = setting.transactionPath;
+    transactionHistory_dialog->init();
     resizeWindow();
     init();
     updateTypeComboBox();
@@ -208,7 +211,9 @@ void MainWindow::newTransaction(transaction data)
 void MainWindow::onNewSetting(clientSetting setting)
 {
     if(setting.transactionPath != this->setting.transactionPath)
+    {
         dirPathChanged(this->setting.transactionPath,setting.transactionPath);
+    }
 
     if(setting.width != this->setting.width || setting.height != this->setting.height)
     {

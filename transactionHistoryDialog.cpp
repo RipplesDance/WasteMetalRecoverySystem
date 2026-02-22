@@ -15,7 +15,21 @@ transactionHistoryDialog::transactionHistoryDialog(QWidget *parent) :
     connect(ui->sort_box, &QComboBox::currentTextChanged, this, &transactionHistoryDialog::sortBoxChanged);
     connect(ui->transactionList, &QListWidget::itemClicked, this, &transactionHistoryDialog::selectedItem);
 
-    init();
+    //set style
+    ui->transactionList->setSpacing(10);
+
+//    ui->transactionList->setStyleSheet(
+//        "QListWidget {"
+//        "    outline: none;"
+//        "}"
+
+//        "QListWidget::item {"
+//        "    color: #333333;"
+//        "    padding: 10px;"
+//        "}"
+//    );
+
+//    ui->frame->setStyleSheet(".QFrame { border-radius: 10px; border: 2px inset #828282; }");
 }
 
 transactionHistoryDialog::~transactionHistoryDialog()
@@ -25,7 +39,9 @@ transactionHistoryDialog::~transactionHistoryDialog()
 
 void transactionHistoryDialog::init()
 {
-    QDir dir("bin/transactions");
+    if(filePath.isEmpty()) return;
+
+    QDir dir(filePath);
 
     //set filter
     QStringList filter;
@@ -60,15 +76,15 @@ void transactionHistoryDialog::updataTransaction(transaction data)
 {
     ui->type_label->setText(data.selectType());
     ui->price_label->setText(QString::number(data.selectPrice(),'f', 2) + "元");
-    ui->id_label->setText("id:" + data.getId());
+    ui->id_label->setText("【<img src=':/images/res/id.ico' width='18' height='18'/> id:" + data.getId()+" 】");
 
-    ui->weight_label->setText("重量:" + QString::number(data.selectWeight(),'f', 2) + "kg");
-    ui->SOH_label->setText("SOH:" + QString::number(data.selectSOH()*100) + "%");
-    ui->energyDensity_label->setText("能量密度:" + QString::number(data.selectEnergyDensity(),'f', 2) + "Wh/kg");
-    ui->leagcyElectricity_label->setText("剩余电量:" + QString::number(data.selectLeagcyElectricity(),'f', 2) + "度");
-    ui->usage_label->setText("回收用途:" + data.selectUsagePurpose());
-    ui->sellingWay_label->setText(QString("出售方式:%1")
-                                  .arg(data.selectSellingWay() == "offline" ? "上门回收" : "线上邮寄"));
+    ui->weight_label->setText("【<img src=':/images/res/weight.ico' width='18' height='18'/> 重量:" + QString::number(data.selectWeight(),'f', 2) + "kg 】");
+    ui->SOH_label->setText("【<img src=':/images/res/SOH.ico' width='18' height='18'/> SOH:" + QString::number(data.selectSOH()*100) + "% 】");
+    ui->energyDensity_label->setText("【<img src=':/images/res/energyDensity.ico' width='18' height='18'/> 能量密度:" + QString::number(data.selectEnergyDensity(),'f', 2) + "Wh/kg 】");
+    ui->leagcyElectricity_label->setText("【<img src=':/images/res/leagcyElectricity.ico' width='18' height='18'/> 剩余电量:" + QString::number(data.selectLeagcyElectricity(),'f', 2) + "度 】");
+    ui->usage_label->setText("【<img src=':/images/res/recycle.ico' width='18' height='18'/> 回收用途:" + data.selectUsagePurpose() + " 】");
+    ui->sellingWay_label->setText(QString("【<img src=':/images/res/package.ico' width='18' height='18'/> 出售方式:%1")
+                                  .arg(data.selectSellingWay() == "offline" ? "上门回收 】" : "线上邮寄 】"));
 
     QDateTime submit = data.selectSubmittedTime();
     QDateTime result = data.selectResultTime();
@@ -82,16 +98,69 @@ void transactionHistoryDialog::updataTransaction(transaction data)
     {
         ui->transactionStatus_label->setText("交易状态:处理中");
         ui->resultTime_label->setText("处理时间");
-        ui->duration_label->setText("耗时:");
+        ui->duration_label->setText("<img src=':/images/res/duration.ico' width='14' height='14'/> 耗时:");
+        ui->transactionStatus_label->setStyleSheet(
+                    "QLabel {"
+                    "padding: 4px 12px;"
+                    "border-radius: 10px;"
+                    "background-color: #2196F3;"
+                    "color: #fff;"
+                    "font-weight: bold;"
+                    "max-width: 210px;"
+                "}"
+                    );
+        ui->resultTime_label->setStyleSheet(""
+                                            "QLabel {"
+                                            "max-width: 210px;"
+                                            "}");
         return;
     }
     ui->transactionStatus_label->setText(QString("交易状态:%1").arg(data.checkStatus()? "已完成" : "被拒绝"));
+    if(data.checkStatus()){
+        ui->transactionStatus_label->setStyleSheet(
+                    "QLabel {"
+                    "padding: 4px 12px;"
+                    "border-radius: 10px;"
+                    "background-color: #4CAF50;"
+                    "color: #fff;"
+                    "font-weight: bold;"
+                    "max-width: 210px;"
+                "}"
+                    );
+
+        ui->resultTime_label->setStyleSheet(
+                    "QLabel {"
+                    "border: none;"
+                    "border-bottom: 1px solid #4CAF50;"
+                    "max-width: 210px;"
+                "}"
+                    );
+    }
+    else{
+        ui->transactionStatus_label->setStyleSheet(
+                    "QLabel {"
+                    "padding: 4px 12px;"
+                    "border-radius: 10px;"
+                    "background-color: #F44336;"
+                    "color: #fff;"
+                    "font-weight: bold;"
+                    "max-width: 210px;"
+                "}"
+                    );
+        ui->resultTime_label->setStyleSheet(
+                    "QLabel {"
+                    "border: none;"
+                    "border-bottom: 1px solid #F44336;"
+                    "max-width: 210px;"
+                "}"
+                    );
+    }
     ui->resultTime_label->setText(result.toString("yyyy-MM-dd hh:mm"));
 
     qint64 totalSecs = submit.secsTo(result);
     int hours = totalSecs / 3600;
     int minutes = (totalSecs % 3600) / 60;
-    ui->duration_label->setText(QString("耗时:%1时%2分").arg(hours).arg(minutes));
+    ui->duration_label->setText("<img src=':/images/res/duration.ico' width='14' height='14'/> "+QString("耗时:%1时%2分").arg(hours).arg(minutes));
 
 
 }
@@ -124,6 +193,17 @@ void transactionHistoryDialog::updataListWidget()
         QListWidgetItem* item = new QListWidgetItem(data.selectType() + "-" +
                                                     QString::number(data.selectPrice()) + "-" + data.getId());
         item->setData(Qt::UserRole, data.selectFilePath());
+
+        if(data.selectResultTime().isValid())
+        {
+            if(data.checkStatus())
+                item->setBackground(QColor(200, 255, 200));
+            else
+                item->setBackground(QColor(255, 200, 200));
+        }
+        else
+            item->setBackground((QColor(200, 200, 255)));
+
         ui->transactionList->addItem(item);
     }
 }

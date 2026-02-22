@@ -33,6 +33,9 @@ public slots:
     void selectedItem(QListWidgetItem *item);
     void sortBoxChanged(QString way);
 
+public:
+    QString filePath;
+
 private:
     Ui::transactionHistoryDialog *ui;
     QVector<transaction> fileVector;

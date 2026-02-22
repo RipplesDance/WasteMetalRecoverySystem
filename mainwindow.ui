@@ -219,7 +219,7 @@
              </font>
             </property>
             <property name="text">
-             <string>能量密度(Wh/kg)</string>
+             <string>能量密度</string>
             </property>
            </widget>
           </item>
@@ -229,6 +229,9 @@
              <font>
               <pointsize>16</pointsize>
              </font>
+            </property>
+            <property name="suffix">
+             <string>Wh/kg</string>
             </property>
             <property name="maximum">
              <double>999999.989999999990687</double>
@@ -378,7 +381,7 @@
              </font>
             </property>
             <property name="text">
-             <string>电池重量(kg)</string>
+             <string>电池重量</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -394,6 +397,9 @@
             </property>
             <property name="frame">
              <bool>true</bool>
+            </property>
+            <property name="suffix">
+             <string>kg</string>
             </property>
             <property name="maximum">
              <double>999999.989999999990687</double>
