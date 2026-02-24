@@ -542,7 +542,7 @@ QComboBox::down-arrow {
 }</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/images/res/package_122391.ico&quot; width=&quot;18&quot; height=&quot;18&quot;/&gt; 出售方式:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/images/res/package.ico&quot; width=&quot;18&quot; height=&quot;18&quot;/&gt; 出售方式:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

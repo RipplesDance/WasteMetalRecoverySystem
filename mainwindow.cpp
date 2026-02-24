@@ -60,11 +60,56 @@ MainWindow::MainWindow(QWidget *parent)
     updateTypeComboBox();
     updateMetalPrice(quo.getMetalPrice());
 
+    polishInterface();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::polishInterface()
+{
+    //set style
+    ui->frame_7->setProperty("type", "priceCard");
+    ui->frame_8->setProperty("type", "priceCard");
+    ui->frame_9->setProperty("type", "priceCard");
+    ui->frame_10->setProperty("type", "priceCard");
+    ui->frame_11->setProperty("type", "priceCard");
+    setupCardShadow(ui->frame_7);
+    setupCardShadow(ui->frame_8);
+    setupCardShadow(ui->frame_9);
+    setupCardShadow(ui->frame_10);
+    setupCardShadow(ui->frame_11);
+
+    ui->li_price->setProperty("type", "metalPrice");
+    ui->co_price->setProperty("type", "metalPrice");
+    ui->mn_price->setProperty("type", "metalPrice");
+    ui->ni_price->setProperty("type", "metalPrice");
+    ui->cu_price->setProperty("type", "metalPrice");
+
+    ui->label_4->setProperty("type", "subtitle");
+    ui->label_9->setProperty("type", "subtitle");
+    ui->label_10->setProperty("type", "subtitle");
+
+    ui->SOH_capcity->setProperty("status", "low");
+
+    ui->frame_5->setProperty("type", "infoFrame");
+    ui->frame_6->setProperty("type", "infoFrame");
+    ui->label_19->setProperty("type", "infoFrame_subtitle");
+    ui->label_21->setProperty("type", "infoFrame_subtitle");
+    ui->usagePurpose->setProperty("type", "infoFrame_value");
+    ui->leagcyElectricity->setProperty("type", "infoFrame_value");
+}
+
+void MainWindow::setupCardShadow(QWidget *card) {
+    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect();
+
+    shadow->setBlurRadius(15);      // 阴影模糊半径，越大越柔和
+    shadow->setColor(QColor(0, 0, 0, 40)); // 黑色阴影，透明度设为 40 (约 15%)
+    shadow->setOffset(0, 4);        // 阴影向下方偏移 4 像素，产生浮动感
+
+    card->setGraphicsEffect(shadow);
 }
 
 void MainWindow::init()
@@ -120,18 +165,32 @@ bool MainWindow::clearDir(QString dirPath)
 
 void MainWindow::updateMetalPrice(metalPrice data)
 {
-    ui->li_price->setText(QString::number(data.liPrice, 'f', 2) + "元/吨");
-    ui->co_price->setText(QString::number(data.coPrice, 'f', 2) + "元/吨");
-    ui->ni_price->setText(QString::number(data.niPrice, 'f', 2) + "元/吨");
-    ui->mn_price->setText(QString::number(data.mnPrice, 'f', 2) + "元/吨");
-    ui->cu_price->setText(QString::number(data.cuPrice, 'f', 2) + "元/吨");
+    ui->li_price->setText(QString::number(int(data.liPrice)) + "元/吨");
+    ui->co_price->setText(QString::number(int(data.coPrice)) + "元/吨");
+    ui->ni_price->setText(QString::number(int(data.niPrice)) + "元/吨");
+    ui->mn_price->setText(QString::number(int(data.mnPrice)) + "元/吨");
+    ui->cu_price->setText(QString::number(int(data.cuPrice)) + "元/吨");
 }
 
 //SOH bar value changed slot
 void MainWindow::onSlideValueChanged(int value)
 {
-    QString percentage =QString::number(value) + "%";
-    ui->SOH_capcity->setText("剩余电池容量："+ percentage);
+    QString status;
+
+        if (value >= 80) {
+            status = "high";
+        } else if (value >= 20) {
+            status = "mid";
+        } else {
+            status = "low";
+        }
+
+        ui->SOH_capcity->setText(QString("剩余电池容量：%1%").arg(value));
+
+        ui->SOH_capcity->setProperty("status", status);
+
+        ui->SOH_capcity->style()->unpolish(ui->SOH_capcity);
+        ui->SOH_capcity->style()->polish(ui->SOH_capcity);
 }
 //combo box value changed
 void MainWindow::comboBoxchanged()

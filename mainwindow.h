@@ -24,6 +24,7 @@
 #include"recoveryCost.h"
 #include"settingDialog.h"
 #include"clientSetting.h"
+#include <QGraphicsDropShadowEffect>
 
 enum {
     HANDSHAKE = 0,
@@ -60,14 +61,15 @@ public:
     void updateMetalPrice(metalPrice data);
     void updateTypeComboBox();
     bool clearDir(QString dirPath);
-//    metalPrice readMetalPriceFromLocal();
-//    void saveMetalPriceToLocal(metalPrice data);
-
     void socketConnectToServer();
     QString getUUID();
     void resizeWindow();
     void startHandshake();
     bool dirPathChanged(QString oldPath, QString newPath);
+
+    //polish
+    void polishInterface();
+    void setupCardShadow(QWidget *card);
 
 protected:
     void closeEvent(QCloseEvent *event) override;

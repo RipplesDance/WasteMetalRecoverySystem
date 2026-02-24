@@ -3,7 +3,6 @@
         <file>res/downarrow.ico</file>
         <file>res/energyDensity.ico</file>
         <file>res/leagcyElectricity.ico</file>
-        <file>res/package_122391.ico</file>
         <file>res/recycle.ico</file>
         <file>res/SOH.ico</file>
         <file>res/weight.ico</file>
@@ -13,5 +12,11 @@
         <file>res/id.ico</file>
         <file>res/money.ico</file>
         <file>res/status.ico</file>
+        <file>res/package.ico</file>
+        <file>res/add.ico</file>
+        <file>res/minus.ico</file>
+    </qresource>
+    <qresource prefix="/QSS">
+        <file>style.qss</file>
     </qresource>
 </RCC>
