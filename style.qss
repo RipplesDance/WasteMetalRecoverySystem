@@ -1,3 +1,4 @@
+
 /* top polish */
 .QFrame[type="priceCard"] {
     background-color: #E8F5E9;
@@ -216,4 +217,25 @@ QPushButton#sellButton_online:hover {
 QPushButton#sellButton_online:pressed {
     background-color: #C8E6C9;
     border: 2px solid #1B5E20;
+}
+
+/* 右侧功能卡片通用样式 */
+interactableFrame[type="sideCard"] {
+    background-color: white;
+    border-radius: 12px;
+    border: 1px solid #E0E4E8;
+    margin-bottom: 10px;
+}
+
+/* 鼠标悬停效果：卡片上移并加深阴影 */
+interactableFrame[type="sideCard"]:hover {
+    background-color: #F1F8E9; /* 淡淡的绿意反馈 */
+    border: 1px solid #4CAF50;
+    margin-top: -2px; /* 产生轻微浮动感 */
+}
+
+/* 描述文字样式 */
+QLabel[type="sideCard_text"] {
+    color: #90A4AE;
+    font-size: 11px;
 }

@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //label cannot block mouse release
     ui->transactionHistory_label->setAttribute(Qt::WA_TransparentForMouseEvents);
-    ui->batteryInfo_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+    ui->setting_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     //setting loaded
     setting = setting_dialog->readSettingFromLocal();
@@ -71,6 +71,7 @@ MainWindow::~MainWindow()
 void MainWindow::polishInterface()
 {
     //set style
+    //top
     ui->frame_7->setProperty("type", "priceCard");
     ui->frame_8->setProperty("type", "priceCard");
     ui->frame_9->setProperty("type", "priceCard");
@@ -82,6 +83,7 @@ void MainWindow::polishInterface()
     setupCardShadow(ui->frame_10);
     setupCardShadow(ui->frame_11);
 
+    //middle
     ui->li_price->setProperty("type", "metalPrice");
     ui->co_price->setProperty("type", "metalPrice");
     ui->mn_price->setProperty("type", "metalPrice");
@@ -94,12 +96,19 @@ void MainWindow::polishInterface()
 
     ui->SOH_capcity->setProperty("status", "low");
 
+    //bottom
     ui->frame_5->setProperty("type", "infoFrame");
     ui->frame_6->setProperty("type", "infoFrame");
     ui->label_19->setProperty("type", "infoFrame_subtitle");
     ui->label_21->setProperty("type", "infoFrame_subtitle");
     ui->usagePurpose->setProperty("type", "infoFrame_value");
     ui->leagcyElectricity->setProperty("type", "infoFrame_value");
+
+    //right
+    ui->transactionHistory_frame->setProperty("type", "sideCard");
+    ui->setting_frame->setProperty("type", "sideCard");
+    ui->transactionHistory_label->setProperty("type", "sideCard_text");
+    ui->setting_label->setProperty("type", "sideCard_text");
 }
 
 void MainWindow::setupCardShadow(QWidget *card) {
