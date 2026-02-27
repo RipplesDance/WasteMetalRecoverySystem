@@ -82,6 +82,7 @@ void MainWindow::polishInterface()
     setupCardShadow(ui->frame_9);
     setupCardShadow(ui->frame_10);
     setupCardShadow(ui->frame_11);
+    setupCardShadow(ui->frame_2);
 
     //middle
     ui->li_price->setProperty("type", "metalPrice");
@@ -477,13 +478,13 @@ void MainWindow::socketError(QAbstractSocket::SocketError socketError)
     socketConnectingTimer->stop();
     times = 0;
     QMessageBox::critical(this,"错误",QString("连接远程服务器失败！错误代码:%1").arg(socketError));
-    ui->socketStatus_label->setText("未连接");
+    ui->socketStatus_label->setText("🔴未连接");
     ui->connectBtn->setEnabled(true);
 }
 
 void MainWindow::socketDisconnected()
 {
-    ui->socketStatus_label->setText("未连接");
+    ui->socketStatus_label->setText("🔴未连接");
     ui->connectBtn->setEnabled(true);
 
 }
@@ -491,7 +492,7 @@ void MainWindow::socketDisconnected()
 void MainWindow::socketConnected()
 {
     startHandshake();
-    ui->socketStatus_label->setText("已连接");
+    ui->socketStatus_label->setText("🟢已连接");
     isConnectted = true;
     socketConnectingTimer->stop();
     connectToServerTimer->stop();
@@ -513,7 +514,7 @@ void MainWindow::connectToServerTimer_timeout()
     times = 0;
     if (socket->state() != QAbstractSocket::ConnectedState) {
             socket->abort(); // 强制终止连接尝试
-            ui->socketStatus_label->setText("未连接");
+            ui->socketStatus_label->setText("🔴未连接");
             ui->connectBtn->setEnabled(true);
             QMessageBox::warning(this,"警告","服务器无法连接，请检查服务器ip是否配置正确！");
         }
@@ -525,13 +526,13 @@ void MainWindow::socketConnectingTimer_timeout()
     if(times > 4)
         times = 0;
     else if (times == 1)
-        ui->socketStatus_label->setText("连接中");
+        ui->socketStatus_label->setText("🟡连接中");
     else if (times == 2)
-        ui->socketStatus_label->setText("连接中.");
+        ui->socketStatus_label->setText("🟡连接中.");
     else if (times == 3)
-        ui->socketStatus_label->setText("连接中..");
+        ui->socketStatus_label->setText("🟡连接中..");
     else if (times == 4)
-        ui->socketStatus_label->setText("连接中...");
+        ui->socketStatus_label->setText("🟡连接中...");
 }
 
 void MainWindow::connectBtnClicked()

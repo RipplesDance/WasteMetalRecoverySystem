@@ -17,6 +17,6 @@
         <file>res/minus.ico</file>
     </qresource>
     <qresource prefix="/QSS">
-        <file>style.qss</file>
+        <file>MainWindow.qss</file>
     </qresource>
 </RCC>

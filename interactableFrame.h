@@ -8,6 +8,7 @@
 #include<QDebug>
 #include<QLabel>
 #include<QMouseEvent>
+#include <QGraphicsDropShadowEffect>
 
 class interactableFrame : public QFrame
 {
@@ -40,6 +41,7 @@ private:
     QVariantAnimation *animation;
     QColor m_bgColor;
     bool isPressed;
+    QGraphicsDropShadowEffect *shadowEffect;
 };
 
 #endif // INTERACTABLEFRAME_H

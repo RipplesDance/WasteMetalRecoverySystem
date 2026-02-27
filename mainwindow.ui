@@ -72,7 +72,7 @@
 }</string>
            </property>
            <property name="text">
-            <string>最终报价：</string>
+            <string>💰最终报价：</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -104,7 +104,7 @@
                </font>
               </property>
               <property name="text">
-               <string>⚡ 剩余电量</string>
+               <string>⚡剩余电量</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -154,7 +154,7 @@
                </font>
               </property>
               <property name="text">
-               <string>♻️ 电池回收用途</string>
+               <string>♻️电池回收用途</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -278,7 +278,7 @@
                </font>
               </property>
               <property name="text">
-               <string>0%（报废）</string>
+               <string>0%（报废）🪫</string>
               </property>
              </widget>
             </item>
@@ -303,7 +303,7 @@
                </font>
               </property>
               <property name="text">
-               <string>100%（高价值）</string>
+               <string>100%（高价值）✨</string>
               </property>
              </widget>
             </item>
@@ -501,7 +501,7 @@
          </sizepolicy>
         </property>
         <property name="frameShape">
-         <enum>QFrame::Box</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
@@ -520,7 +520,7 @@
             </font>
            </property>
            <property name="text">
-            <string>个人数据</string>
+            <string>📄个人数据</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -536,7 +536,7 @@
          <item>
           <widget class="interactableFrame" name="transactionHistory_frame">
            <property name="frameShape">
-            <enum>QFrame::Box</enum>
+            <enum>QFrame::NoFrame</enum>
            </property>
            <property name="frameShadow">
             <enum>QFrame::Sunken</enum>
@@ -553,7 +553,7 @@
                </font>
               </property>
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;订单记录&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;查看本地所有订单&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;✅订单记录&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;查看本地所有订单&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -566,7 +566,7 @@
          <item>
           <widget class="interactableFrame" name="setting_frame">
            <property name="frameShape">
-            <enum>QFrame::Box</enum>
+            <enum>QFrame::NoFrame</enum>
            </property>
            <property name="frameShadow">
             <enum>QFrame::Sunken</enum>
@@ -583,7 +583,7 @@
                </font>
               </property>
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;设置&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;修改配置信息&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;⚙️设置&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;修改配置信息&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
@@ -641,7 +641,7 @@
            </font>
           </property>
           <property name="text">
-           <string>连接中</string>
+           <string>🟡连接中</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>

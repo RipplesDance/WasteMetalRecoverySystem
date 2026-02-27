@@ -134,14 +134,14 @@ QSlider::handle:horizontal:hover {
 }
 
 /* bottom polish */
-/* 1. 底部总容器 Frame */
+/*  底部总容器 Frame */
 QFrame#frame_4 {
     background-color: #F8F9FB; /* 极浅灰蓝底色 */
     border-top: 1px solid #DDE2E8; /* 顶部加一条细线，产生分割感 */
     border-radius: 0px;
 }
 
-/* 2. 左右对称的胶囊卡片 */
+/*  左右对称的胶囊卡片 */
 QFrame[type="infoFrame"] {
     background-color: #FFFFFF;    /* 纯白卡片底色 */
     border: 1px solid #E0E4E8;    /* 浅灰色边框 */
@@ -163,7 +163,7 @@ QLabel[type="infoFrame_value"] {
     font-weight: bold;
 }
 
-/* 3. 最终报价的展示框 */
+/*  最终报价的展示框 */
 QLineEdit#final_price {
     background-color: #FFF8E1;    /* 奶油色底色，突出金钱感 */
     border: 2px solid #FFD54F;    /* 金色边框 */
@@ -219,23 +219,52 @@ QPushButton#sellButton_online:pressed {
     border: 2px solid #1B5E20;
 }
 
-/* 右侧功能卡片通用样式 */
-interactableFrame[type="sideCard"] {
-    background-color: white;
+/*  右边   */
+/*  底部总容器 Frame */
+QFrame#frame_2 {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0 #f8f9fc, stop:1 #ffffff);
+    border: 1px solid #e0e4ed;
     border-radius: 12px;
-    border: 1px solid #E0E4E8;
-    margin-bottom: 10px;
+    padding: 16px;
 }
 
-/* 鼠标悬停效果：卡片上移并加深阴影 */
-interactableFrame[type="sideCard"]:hover {
-    background-color: #F1F8E9; /* 淡淡的绿意反馈 */
-    border: 1px solid #4CAF50;
-    margin-top: -2px; /* 产生轻微浮动感 */
+QLabel#label_23 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #263238;
+    padding-left: 10px;
 }
 
-/* 描述文字样式 */
-QLabel[type="sideCard_text"] {
-    color: #90A4AE;
-    font-size: 11px;
+/*  右上边   */
+QPushButton#connectBtn {
+    background-color: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 18px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: 500;
+    min-width: 100px;
+}
+
+QPushButton#connectBtn:hover {
+    background-color: #15803d;
+}
+
+QPushButton#connectBtn:pressed {
+    background-color: #166534;
+}
+
+/* 禁用状态 */
+QPushButton#connectBtn:disabled {
+    background-color: #6ee7b7;
+    color: #14532d;
+}
+
+/* 状态文字 */
+QLabel#socketStatus_label {
+    color: #334155;
+    font-weight: 500;
+    font-size: 24px;
 }
