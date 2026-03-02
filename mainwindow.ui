@@ -510,6 +510,9 @@
          <number>2</number>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_14" stretch="1,2,2">
+         <property name="spacing">
+          <number>16</number>
+         </property>
          <item>
           <widget class="QLabel" name="label_23">
            <property name="font">
@@ -652,8 +655,18 @@
          <widget class="QLabel" name="label_6">
           <property name="font">
            <font>
-            <pointsize>14</pointsize>
+            <pointsize>-1</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel {
+    font-size: 24px;
+    font-weight: bold;
+    color: #263238;
+    padding-left: 10px;
+}</string>
           </property>
           <property name="text">
            <string>远程服务器连接状态</string>
