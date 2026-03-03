@@ -18,5 +18,6 @@
     </qresource>
     <qresource prefix="/QSS">
         <file>MainWindow.qss</file>
+        <file>setting_stylesheet.qss</file>
     </qresource>
 </RCC>

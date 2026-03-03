@@ -12,6 +12,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     setting_dialog = new settingDialog(this);
     setting_dialog->hide();
+    QFile file(":/QSS/setting_stylesheet.qss");
+        if (file.open(QFile::ReadOnly)) {
+            QString styleSheet = QLatin1String(file.readAll());
+            setting_dialog->setStyleSheet(styleSheet);
+            file.close();
+        }
     connect(setting_dialog,&settingDialog::settingChanged,this,&MainWindow::onNewSetting);
 
     //timer init
