@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>879</width>
-    <height>680</height>
+    <width>1250</width>
+    <height>850</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1200</width>
+    <height>800</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>废旧电池回收报价系统</string>
@@ -16,7 +22,10 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_5">
     <item>
-     <layout class="QGridLayout" name="gridLayout_4" columnstretch="0,0,0">
+     <layout class="QGridLayout" name="gridLayout_4" columnstretch="3,0,1">
+      <property name="spacing">
+       <number>6</number>
+      </property>
       <item row="3" column="0">
        <widget class="QFrame" name="frame_4">
         <property name="frameShape">
@@ -212,6 +221,12 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="energyDensity_spinBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <pointsize>16</pointsize>
@@ -333,6 +348,12 @@
           </item>
           <item>
            <widget class="QComboBox" name="type_line">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <pointsize>16</pointsize>
@@ -495,7 +516,7 @@
       <item row="2" column="2" rowspan="3">
        <widget class="QFrame" name="frame_2">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -600,6 +621,12 @@
        <layout class="QGridLayout" name="gridLayout_5" columnstretch="1,5,1">
         <item row="2" column="1">
          <widget class="QPushButton" name="connectBtn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -638,6 +665,12 @@
         </item>
         <item row="1" column="0" colspan="3">
          <widget class="QLabel" name="socketStatus_label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -653,6 +686,12 @@
         </item>
         <item row="0" column="0" colspan="3">
          <widget class="QLabel" name="label_6">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <pointsize>-1</pointsize>
@@ -1017,7 +1056,7 @@ color: #2E7D32;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>879</width>
+     <width>1250</width>
      <height>21</height>
     </rect>
    </property>
