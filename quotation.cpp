@@ -385,15 +385,16 @@ double quotation::quotationCaculator(QString type, double energyDensity, double 
     {
         cost = this->cost;
     }
-//    qDebug()<<cost << metal_price << weight;
 
+    double recyclingPrice = 0;
     if(SOH >= 0.8 && energyDensity > 0)
     {
         //reusable
-        double finalPrice = weight * energyDensity * SOH;
+        recyclingPrice = weight * energyDensity * SOH;
         if(SOH>=0.9)
-            return finalPrice * cost.unitPrice_90;
-        return finalPrice * cost.unitPrice_80;
+            recyclingPrice *= cost.unitPrice_90;
+        else
+            recyclingPrice *= cost.unitPrice_80;
     }
 
     double positiveMaterial = weight * battery->positiveMaterialsRatio * battery->positiveMaterial_recycleRatio;
@@ -417,7 +418,7 @@ double quotation::quotationCaculator(QString type, double energyDensity, double 
     double finalPrice = (li_quotation+co_quotation+mn_quotation+ni_quotation+cu_quotation)
             - cost.price_per_kilo * weight;
 
-    return finalPrice > 0 ? finalPrice* (1 - cost.profit) : 0;
+    return finalPrice > recyclingPrice ? finalPrice* (1 - cost.profit) : recyclingPrice;
 
 }
 

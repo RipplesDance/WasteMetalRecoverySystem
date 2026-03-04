@@ -646,7 +646,6 @@ void MainWindow::msgFromServer()
             }
             else
             {
-
                 quo.addRecoveryCost(battery, cost);
                 quo.addBatteryType(battery,data);
             }

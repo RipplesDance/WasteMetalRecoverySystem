@@ -16,6 +16,9 @@
     <height>770</height>
    </size>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::StrongFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>废旧电池回收报价系统</string>
   </property>

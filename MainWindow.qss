@@ -130,7 +130,6 @@ QSlider::handle:horizontal {
 /* 滑块悬停效果 */
 QSlider::handle:horizontal:hover {
     background: #4CAF50;
-    transform: scale(1.1);
 }
 
 /* bottom polish */

@@ -5,7 +5,7 @@ clientSetting::clientSetting()
     ip = "127.0.0.1";
     port = 8888;
      width = 1320;
-     height = 770;
+     height = 820;
      transactionPath = "bin/transactions";
      waittingTime = 5;
 }
