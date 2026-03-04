@@ -15,6 +15,11 @@ transactionHistoryDialog::transactionHistoryDialog(QWidget *parent) :
     connect(ui->sort_box, &QComboBox::currentTextChanged, this, &transactionHistoryDialog::sortBoxChanged);
     connect(ui->transactionList, &QListWidget::itemClicked, this, &transactionHistoryDialog::selectedItem);
 
+    ui->transactionList->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(ui->transactionList, &QListWidget::customContextMenuRequested,
+            this, &transactionHistoryDialog::showTransactionContextMenu);
+
     //set style
     ui->transactionList->setSpacing(10);
 
@@ -70,6 +75,69 @@ void transactionHistoryDialog::init()
     }
 
     sortBoxChanged(ui->sort_box->currentText());
+}
+
+void transactionHistoryDialog::showTransactionContextMenu(const QPoint &pos)
+{
+    QListWidget *list = ui->transactionList;
+    QListWidgetItem *item = list->itemAt(pos);
+
+    // 如果没点到任何 item，不弹出菜单
+    if (!item) {
+        return;
+    }
+
+    // 获取该 item 对应的文件路径（你已经设置了 Qt::UserRole）
+    QString filePath = item->data(Qt::UserRole).toString();
+    if (filePath.isEmpty()) {
+        QMessageBox::warning(this, "提示", "该订单缺少文件路径信息，无法操作");
+        return;
+    }
+    QMenu contextMenu(this);
+     QAction *deleteAction = contextMenu.addAction(QIcon(":/images/res/delete.ico"), "删除该订单");
+
+    QAction *selected = contextMenu.exec(list->viewport()->mapToGlobal(pos));
+
+    if (selected == deleteAction) {
+        QMessageBox::StandardButton reply = QMessageBox::question(
+                    this,
+                    "确认删除",
+                    QString("确定要删除订单：\n%1\n此操作无法恢复！").arg(filePath),
+                    QMessageBox::Yes | QMessageBox::No,
+                    QMessageBox::No
+                    );
+
+        if (reply != QMessageBox::Yes) {
+            return;
+        }
+
+        // remove from vector
+        auto it = std::find_if(fileVector.begin(), fileVector.end(),
+                               [&filePath](transaction &t) {
+            return t.selectFilePath() == filePath;
+        });
+        //find it in vector
+        if (it != fileVector.end()) {
+            fileVector.erase(it);
+        } else {
+            QMessageBox::warning(this, "异常", "在数据列表中未找到该订单");
+        }
+
+
+        // remove from list widget
+        int row = list->row(item);
+        delete list->takeItem(row);
+        sortBoxChanged(ui->sort_box->currentText());
+
+        // remove from local
+        QFile file(filePath);
+        if (file.exists()) {
+            if (!file.remove()) {
+                QMessageBox::warning(this, "文件删除失败",
+                                     "订单数据已从列表移除，但本地文件删除失败:\n" + filePath);
+            }
+        }
+    }
 }
 
 void transactionHistoryDialog::updataTransaction(transaction data)

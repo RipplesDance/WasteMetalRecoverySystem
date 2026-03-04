@@ -10,6 +10,8 @@
 #include<QMessageBox>
 #include<QListWidget>
 #include<QListWidgetItem>
+#include<QMenu>
+#include<QAction>
 #include"transaction.h"
 
 namespace Ui {
@@ -32,7 +34,7 @@ public slots:
     void onNewTransaction();
     void selectedItem(QListWidgetItem *item);
     void sortBoxChanged(QString way);
-
+    void showTransactionContextMenu(const QPoint &pos);
 public:
     QString filePath;
 
