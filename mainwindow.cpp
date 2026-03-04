@@ -9,9 +9,11 @@ MainWindow::MainWindow(QWidget *parent)
     //dialog init
     transactionHistory_dialog = new transactionHistoryDialog(this);
     transactionHistory_dialog->hide();
+    transactionHistory_dialog->setWindowIcon(QIcon(":/images/res/transaction.ico"));
 
     setting_dialog = new settingDialog(this);
     setting_dialog->hide();
+    setting_dialog->setWindowIcon(QIcon(":/images/res/gear.ico"));
     QFile file(":/QSS/setting_stylesheet.qss");
         if (file.open(QFile::ReadOnly)) {
             QString styleSheet = QLatin1String(file.readAll());
@@ -483,7 +485,7 @@ void MainWindow::socketError(QAbstractSocket::SocketError socketError)
     connectToServerTimer->stop();
     socketConnectingTimer->stop();
     times = 0;
-    QMessageBox::critical(this,"错误",QString("连接远程服务器失败！错误代码:%1").arg(socketError));
+    qDebug()<<socketError;
     ui->socketStatus_label->setText("🔴未连接");
     ui->connectBtn->setEnabled(true);
 }
@@ -522,7 +524,6 @@ void MainWindow::connectToServerTimer_timeout()
             socket->abort(); // 强制终止连接尝试
             ui->socketStatus_label->setText("🔴未连接");
             ui->connectBtn->setEnabled(true);
-            QMessageBox::warning(this,"警告","服务器无法连接，请检查服务器ip是否配置正确！");
         }
 }
 

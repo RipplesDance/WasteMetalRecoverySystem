@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
         }
 
     MainWindow w;
+    w.setWindowIcon(QIcon(":/images/res/battery_recycling.ico"));
     w.show();
     return a.exec();
 }

@@ -15,6 +15,9 @@
         <file>res/package.ico</file>
         <file>res/add.ico</file>
         <file>res/minus.ico</file>
+        <file>res/battery_recycling.ico</file>
+        <file>res/transaction.ico</file>
+        <file>res/gear.ico</file>
     </qresource>
     <qresource prefix="/QSS">
         <file>MainWindow.qss</file>
