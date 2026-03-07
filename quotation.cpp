@@ -397,6 +397,7 @@ double quotation::quotationCaculator(QString type, double energyDensity, double 
             recyclingPrice *= cost.unitPrice_80;
     }
 
+    //total weighgt out of battery
     double positiveMaterial = weight * battery->positiveMaterialsRatio * battery->positiveMaterial_recycleRatio;
     double positiveMaterialCompound = positiveMaterial * battery->compoundRatio * battery->compound_recycleRatio;
 
