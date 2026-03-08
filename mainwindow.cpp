@@ -63,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent)
     setting = setting_dialog->readSettingFromLocal();
     transactionHistory_dialog->filePath = setting.transactionPath;
     transactionHistory_dialog->init();
+
+    //initializaiton
     resizeWindow();
     init();
     updateTypeComboBox();
