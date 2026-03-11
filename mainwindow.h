@@ -50,7 +50,7 @@ public:
     ~MainWindow();
 
     void init();
-    double fetchNumberFromString(QString str);
+    double fetchNumberFromString(QString str);//get all numbers from a Qstring type
     void makeDirPath(QString filePath);
     void sellButtonClicked(QString sellingWay);
     void frameClicked(QString frameType);
