@@ -125,15 +125,17 @@ void MainWindow::polishInterface()
 void MainWindow::setupCardShadow(QWidget *card) {
     QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect();
 
-    shadow->setBlurRadius(15);      // 阴影模糊半径，越大越柔和
-    shadow->setColor(QColor(0, 0, 0, 40)); // 黑色阴影，透明度设为 40 (约 15%)
-    shadow->setOffset(0, 4);        // 阴影向下方偏移 4 像素，产生浮动感
+    //set shadow
+    shadow->setBlurRadius(15);
+    shadow->setColor(QColor(0, 0, 0, 40));
+    shadow->setOffset(0, 4);
 
     card->setGraphicsEffect(shadow);
 }
 
 void MainWindow::init()
 {
+    //set 0 for these items
     ui->weight_spinBox->setValue(0.0);
     ui->energyDensity_spinBox->setValue(0.0);
     ui->final_price->setText(0);
