@@ -51,9 +51,9 @@ public:
 
     void init();
     double fetchNumberFromString(QString str);//get all numbers from a Qstring type
-    void makeDirPath(QString filePath);
-    void sellButtonClicked(QString sellingWay);
-    void frameClicked(QString frameType);
+    void makeDirPath(QString filePath); // create certain file path
+    void sellButtonClicked(QString sellingWay); // 2 sell buttons clicked
+    void frameClicked(QString frameType); // personal data area clicked
     void updateTransaction(transaction data);
     void newTransaction(transaction data);
     void sendMsgToServer(int type, transaction data);
