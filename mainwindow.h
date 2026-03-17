@@ -54,10 +54,10 @@ public:
     void makeDirPath(QString filePath); // create certain file path
     void sellButtonClicked(QString sellingWay); // 2 sell buttons clicked
     void frameClicked(QString frameType); // personal data area clicked
-    void updateTransaction(transaction data);
-    void newTransaction(transaction data);
-    void sendMsgToServer(int type, transaction data);
-    void sendMsgToServer(int type);
+    void updateTransaction(transaction data); // update when status changes
+    void newTransaction(transaction data); // new transaction will send msg to server
+    void sendMsgToServer(int type, transaction data); // communicate with server on way 1
+    void sendMsgToServer(int type); // communicate with server on way 2
     void updateMetalPrice(metalPrice data);
     void updateTypeComboBox();
     bool clearDir(QString dirPath);
