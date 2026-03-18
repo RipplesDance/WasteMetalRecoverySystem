@@ -58,7 +58,7 @@ public:
     void newTransaction(transaction data); // new transaction will send msg to server
     void sendMsgToServer(int type, transaction data); // communicate with server on way 1
     void sendMsgToServer(int type); // communicate with server on way 2
-    void updateMetalPrice(metalPrice data);
+    void updateMetalPrice(metalPrice data);// trigger when server send new metal price
     void updateTypeComboBox();
     bool clearDir(QString dirPath);
     void socketConnectToServer();
