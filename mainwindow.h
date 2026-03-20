@@ -59,9 +59,9 @@ public:
     void sendMsgToServer(int type, transaction data); // communicate with server on way 1
     void sendMsgToServer(int type); // communicate with server on way 2
     void updateMetalPrice(metalPrice data);// trigger when server send new metal price
-    void updateTypeComboBox();
-    bool clearDir(QString dirPath);
-    void socketConnectToServer();
+    void updateTypeComboBox(); // trigger when change current item
+    bool clearDir(QString dirPath); // remove certain dir path
+    void socketConnectToServer(); // to connect remote server
     QString getUUID();
     void resizeWindow();
     void startHandshake();
