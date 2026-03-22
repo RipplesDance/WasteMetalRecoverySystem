@@ -62,10 +62,10 @@ public:
     void updateTypeComboBox(); // trigger when change current item
     bool clearDir(QString dirPath); // remove certain dir path
     void socketConnectToServer(); // to connect remote server
-    QString getUUID();
-    void resizeWindow();
-    void startHandshake();
-    bool dirPathChanged(QString oldPath, QString newPath);
+    QString getUUID(); // grab the only uuid on device
+    void resizeWindow(); // modify the whole window size
+    void startHandshake(); // trigger when connect to server successfully
+    bool dirPathChanged(QString oldPath, QString newPath); // change from old dir path to new dir path
 
     //polish
     void polishInterface();
