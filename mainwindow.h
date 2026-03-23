@@ -68,8 +68,8 @@ public:
     bool dirPathChanged(QString oldPath, QString newPath); // change from old dir path to new dir path
 
     //polish
-    void polishInterface();
-    void setupCardShadow(QWidget *card);
+    void polishInterface(); // general polish function
+    void setupCardShadow(QWidget *card); // card shadow
 
 protected:
     void closeEvent(QCloseEvent *event) override;
