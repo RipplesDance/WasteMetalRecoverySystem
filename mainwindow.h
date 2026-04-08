@@ -72,10 +72,10 @@ public:
     void setupCardShadow(QWidget *card); // card shadow
 
 protected:
-    void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent *event) override; // double check close
 
 public slots:
-    void onSlideValueChanged(int value);
+    void onSlideValueChanged(int value); //trigger if SOH bar value changed
     void offFocus();
     void comboBoxchanged();
 
