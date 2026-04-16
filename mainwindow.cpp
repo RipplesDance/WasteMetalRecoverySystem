@@ -22,6 +22,16 @@ MainWindow::MainWindow(QWidget *parent)
         }
     connect(setting_dialog,&settingDialog::settingChanged,this,&MainWindow::onNewSetting);
 
+    address_dialog = new addressDialog(this);
+    address_dialog->hide();
+    address_dialog->setWindowIcon(QIcon(":/images/res/transaction.ico"));
+    QFile addressQss(":/QSS/address.qss");
+        if (addressQss.open(QFile::ReadOnly)) {
+            QString styleSheet = QLatin1String(addressQss.readAll());
+            address_dialog->setStyleSheet(styleSheet);
+            addressQss.close();
+        }
+
     //timer init
     socketConnectingTimer = new QTimer(this);
     times = 0;
@@ -50,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->transactionHistory_frame, &interactableFrame::clicked,[=](){this->frameClicked("transactionHistory");});
     connect(ui->setting_frame, &interactableFrame::clicked,[=](){this->frameClicked("setting");});
+    connect(ui->address_frame, &interactableFrame::clicked,[=](){this->frameClicked("address");});
 
     connect(ui->sellButton_offline, &QPushButton::clicked, [=](){sellButtonClicked("offline");});
     connect(ui->sellButton_online, &QPushButton::clicked, [=](){sellButtonClicked("online");});
@@ -58,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
     //label cannot block mouse release
     ui->transactionHistory_label->setAttribute(Qt::WA_TransparentForMouseEvents);
     ui->setting_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+    ui->address_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     //setting loaded
     setting = setting_dialog->readSettingFromLocal();
@@ -396,6 +408,10 @@ void MainWindow::frameClicked(QString frameType)
     {
         setting_dialog->show();
         setting_dialog->setDefult(setting);
+    }
+    else if (frameType == "address")
+    {
+        address_dialog->show();
     }
 }
 

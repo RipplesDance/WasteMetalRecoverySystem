@@ -24,6 +24,8 @@
 #include"recoveryCost.h"
 #include"settingDialog.h"
 #include"clientSetting.h"
+#include"addressDialog.h"
+#include"address.h"
 #include <QGraphicsDropShadowEffect>
 
 enum {
@@ -102,6 +104,7 @@ private:
     //extra dialog
     transactionHistoryDialog *transactionHistory_dialog;
     settingDialog* setting_dialog;
+    addressDialog* address_dialog;
 
     //client parameters
     QTcpSocket *socket;

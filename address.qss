@@ -1,0 +1,10 @@
+/* 针对特定属性的 Label 调整字号，覆盖全局设置 */
+QLabel[type="header"] {
+    font-size: 24px !important; /* 使用 !important 确保覆盖 setting_stylesheet.qss 中的 24px  */
+    font-weight: bold;
+}
+
+QLabel[type="content"] {
+    font-size: 14px !important;
+    font-weight: normal;
+}
