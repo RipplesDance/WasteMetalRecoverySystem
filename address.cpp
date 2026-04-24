@@ -19,12 +19,21 @@ address::~address()
 }
 
 bool address::isValid() {
-    return !fullName.isEmpty() && phoneNumber.length() >= 11;
+    return !fullName.isEmpty() && phoneNumber.length() >= 11 && !detail.isEmpty();
+}
+
+void address::createFilePath()
+{
+    QDir dir;
+    if(!dir.exists(addressPath))
+    {
+        dir.mkdir(addressPath);
+    }
 }
 
 void address::saveAddressToLocal(address data)
 {
-
+    createFilePath();
     QString fileName =data.id.toUtf8().toBase64();
 
     QFile file(addressPath + "/" + fileName + ".dat");
@@ -37,8 +46,24 @@ void address::saveAddressToLocal(address data)
     out<< data;
 }
 
+QString address::removeFromLocal(const address data)
+{
+    QString fileName = data.id.toUtf8().toBase64();
+    QString file = addressPath + "/" + fileName + ".dat";
+    QFile local(file);
+    if(!QFile::exists(file))
+    {
+        return "文件不存在";
+    }
+    if (local.remove())
+        return "删除成功";
+    else
+        return "删除失败";
+}
+
 QList<address> address::readAllAddressFromLocal()
 {
+    createFilePath();
     QList<address> list;
 
     QDir dir(addressPath);
@@ -72,7 +97,10 @@ QString address::generateId() {
     return QString("%1_%2").arg(timePart).arg(randomPart);
 }
 
-QString address::getFullAddress() {
+QString address::getFullAddress(const address* data = nullptr) {
+    if(data != nullptr)
+        return QString("%1 %2 %3 %4 %5")
+               .arg(data->country).arg(data->province).arg(data->city).arg(data->district).arg(data->detail);
     return QString("%1 %2 %3 %4 %5")
            .arg(country).arg(province).arg(city).arg(district).arg(detail);
 }

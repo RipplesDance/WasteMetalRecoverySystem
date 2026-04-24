@@ -82,6 +82,16 @@ void interactableFrame::mouseReleaseEvent(QMouseEvent *event)
                 }
         emit clicked();
     }
+    else if (event->button() == Qt::RightButton && isPressed)
+    {
+        isPressed = false;
+        if (underMouse()) {
+                    transition(QColor(235, 245, 235), 180);
+                } else {
+                    transition(QColor(248, 252, 248), 220);
+                }
+        emit rightClicked();
+    }
 }
 
 void interactableFrame::paintEvent(QPaintEvent *event)

@@ -22,6 +22,11 @@
   <layout class="QGridLayout" name="gridLayout" columnstretch="1,2">
    <item row="1" column="0">
     <widget class="QScrollArea" name="scrollArea">
+     <property name="font">
+      <font>
+       <pointsize>18</pointsize>
+      </font>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -83,7 +88,7 @@
             </font>
            </property>
            <property name="text">
-            <string>※ 姓名:</string>
+            <string>* 姓名:</string>
            </property>
           </widget>
          </item>
@@ -119,7 +124,7 @@
             </font>
            </property>
            <property name="text">
-            <string>※ 联系电话:</string>
+            <string>* 联系电话:</string>
            </property>
           </widget>
          </item>
@@ -155,7 +160,7 @@
             </font>
            </property>
            <property name="text">
-            <string>※ 省：</string>
+            <string>* 省：</string>
            </property>
           </widget>
          </item>
@@ -193,7 +198,7 @@
             </font>
            </property>
            <property name="text">
-            <string>※ 市:</string>
+            <string>* 市:</string>
            </property>
           </widget>
          </item>
@@ -231,7 +236,7 @@
             </font>
            </property>
            <property name="text">
-            <string>※ 区/县:</string>
+            <string>* 区/县:</string>
            </property>
           </widget>
          </item>
@@ -255,7 +260,7 @@
          </font>
         </property>
         <property name="placeholderText">
-         <string>详细地址：小区，街道，楼号等</string>
+         <string>*详细地址：小区，街道，楼号等</string>
         </property>
        </widget>
       </item>

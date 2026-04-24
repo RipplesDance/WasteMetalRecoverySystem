@@ -16,12 +16,13 @@ class address
 public:
     address();
     ~address();
-    QString getFullAddress();
+    QString getFullAddress(const address* data);
     bool isValid();
     void saveAddressToLocal(address data);
+    QString removeFromLocal(const address data);
     QList<address> readAllAddressFromLocal();
     QString generateId();
-
+    void createFilePath();
 
     friend QDataStream &operator<<(QDataStream &out, const address &data);
     friend QDataStream &operator>>(QDataStream &in, address &data);

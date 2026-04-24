@@ -38,6 +38,7 @@ private:
 
 signals:
     void clicked();
+    void rightClicked();
 
 private:
     QVariantAnimation *animation;
