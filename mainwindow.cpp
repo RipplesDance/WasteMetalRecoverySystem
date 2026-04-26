@@ -240,6 +240,13 @@ void MainWindow::sellButtonClicked(QString sellingWay)
         return;
     }
 
+    address default_address = address_dialog->getDefaultAddress();
+    if(sellingWay == "offline" && (default_address.id.isEmpty() || !default_address.isValid()))
+    {
+        QMessageBox::warning(this,"警告","当前地址簿没有默认地址，无法发送交易!");
+        return;
+    }
+
      double weight = ui->weight_spinBox->value();
      QString text_SOH = ui->SOH_capcity->text();
 
@@ -270,6 +277,8 @@ void MainWindow::sellButtonClicked(QString sellingWay)
     transactionDetails.setSellingWay(sellingWay);
     transactionDetails.setLeagcyElectricity(leagcyElectricity);
     transactionDetails.setUuid(getUUID());
+    transactionDetails.sent_address = default_address;
+    transactionDetails.post_address = post_address;
 
     QString filePath = QString(setting.transactionPath +"/%1.dat").arg(transactionDetails.getId());
     transactionDetails.setFilePath(filePath);
@@ -617,7 +626,14 @@ void MainWindow::msgFromServer()
         }
         else if(order == NEW_TRANSACTION)   //transaction received
         {
-            QMessageBox::information(this, "成功", "电池交易请求提交成功！");
+            QString sellingWay;
+            in>>sellingWay;
+            if(sellingWay == "offline")
+                QMessageBox::information(this, "成功", "电池交易请求提交成功！我们会尽快安排人员到场处理！");
+            else
+            {
+                QMessageBox::information(this, "成功", QString("已收到您的交易请求，请邮寄到\n %1！").arg(post_address));
+            }
             transactionReceivedTimer->stop();
         }
         else if(order == TRANSACTION_STATUS)   //transaction status updated

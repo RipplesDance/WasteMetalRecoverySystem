@@ -38,18 +38,19 @@ public:
     void putAddressToUi(address data);
     void clearUi();
     void setAddress(address data);
-    bool isUniqueDefault(address data);
+    bool isDefaultExists();
+    void refreshUi();
+    address getDefaultAddress();
 
 public slots:
     void save_btn_clicked();
-    void setDefaultRequested(address data);
-    void deleteRequested(address data);
 
 private:
     QVBoxLayout* m_contentLayout;
     Ui::addressDialog *ui;
     QMap<QString, QMap<QString, QStringList>> pcd_pair;
     QList<address> addressList;
+    QString currentEditingId;
 };
 
 #endif // ADDRESSDIALOG_H

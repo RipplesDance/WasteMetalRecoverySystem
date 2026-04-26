@@ -2,7 +2,6 @@
 
 address::address()
 {
-     id = generateId();
      fullName="";
      phoneNumber="";
      country="";
@@ -35,15 +34,17 @@ void address::saveAddressToLocal(address data)
 {
     createFilePath();
     QString fileName =data.id.toUtf8().toBase64();
-
     QFile file(addressPath + "/" + fileName + ".dat");
     if(!file.open(QIODevice::WriteOnly))
     {
         qDebug()<<"无法打开文件"+fileName;
+        return;
     }
     QDataStream out(&file);
     out.setVersion(QDataStream::Qt_5_14);
     out<< data;
+
+    file.close();
 }
 
 QString address::removeFromLocal(const address data)
@@ -82,7 +83,6 @@ QList<address> address::readAllAddressFromLocal()
             in.setVersion(QDataStream::Qt_5_14);
             address obj;
             in >> obj;
-
             list.push_back(obj);
 
             file.close();
@@ -107,14 +107,14 @@ QString address::getFullAddress(const address* data = nullptr) {
 
 QDataStream &operator<<(QDataStream &out, const address &data)
 {
-    out<< data.fullName << data.phoneNumber<<data.country << data.province
+    out<< data.id << data.fullName << data.phoneNumber<<data.country << data.province
       << data.city << data.district << data.detail << data.zipCode << data.isDefault;
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in, address &data)
 {
-    in>> data.fullName >> data.phoneNumber>>data.country >> data.province
+    in>> data.id >> data.fullName >> data.phoneNumber>>data.country >> data.province
       >> data.city >> data.district >> data.detail >> data.zipCode >> data.isDefault;
     return in;
 }
@@ -123,6 +123,7 @@ QDebug operator<<(QDebug dbg, const address &obj)
 {
     QDebugStateSaver saver(dbg);
     dbg.nospace() << "address("
+                  << "id: " << obj.id << ", "
                   << "fullName: " << obj.fullName << ", "
                   << "phoneNumber: " << obj.phoneNumber << ", "
                   << "country: " << obj.country << ", "

@@ -116,5 +116,8 @@ private:
 
     //setting
     clientSetting setting;
+
+    //post address
+    QString post_address = "上海市 松江区 XX有限公司";
 };
 #endif // MAINWINDOW_H

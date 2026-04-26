@@ -62,14 +62,11 @@ void addressDialog::init()
 {
     addressList.clear();
     addressList = address().readAllAddressFromLocal();
-    if(addressList.length()<=0)
-        return;
-
 
     for(address data : addressList)
-    {
-        putAddressToUi(data);
-    }
+        qDebug()<<"init的data" << data;
+
+    refreshUi();
 }
 
 void addressDialog::setAddress(address data)
@@ -89,6 +86,7 @@ void addressDialog::setAddress(address data)
     ui->province_comboBox->setEditText(province);
     ui->district_comboBox->setEditText(district);
     ui->detailAddrTextEdit->setText(detail);
+    ui->zipCodeLineEdit->setText(zipCode);
     if(isDefault)
         ui->defaultCheckBox->setCheckState(Qt::CheckState::Checked);
     else
@@ -174,63 +172,79 @@ void addressDialog::putAddressToUi(address data)
     // 6. 连接点击信号
     connect(card, &interactableFrame::clicked, this, [=](){
         QString fullAddress = address().getFullAddress(&data);
-        qDebug() << "已选中地址：" << data.fullName << fullAddress;
+        currentEditingId = data.id;
         setAddress(data);
     });
 
-//    connect(card, &interactableFrame::rightClicked, this, [=](QContextMenuEvent *event){
-//        QMenu menu(this);
+    // 7. 处理右键菜单 (新增部分)
+        // 设置策略为自定义上下文菜单
+        card->setContextMenuPolicy(Qt::CustomContextMenu);
 
-//            // 创建动作
-//            QAction *setDefaultAct = new QAction("设为默认地址", this);
-//            QAction *deleteAct = new QAction("删除该地址", this);
+        connect(card, &interactableFrame::customContextMenuRequested, this, [=](const QPoint &pos){
+            QMenu menu(this);
 
-//            // 添加到菜单
-//            menu.addAction(setDefaultAct);
-//            menu.addSeparator(); // 加一条分割线
-//            menu.addAction(deleteAct);
+            // 样式美化（可选）
+            menu.setStyleSheet("QMenu { background-color: white; border: 1px solid #dcdcdc; }"
+                               "QMenu::item { padding: 8px 25px; }"
+                               "QMenu::item:selected { background-color: #e8f5e9; color: #2e7d32; }");
 
-//            // 连接动作信号
-//            connect(setDefaultAct, &QAction::triggered, this, [=](){
-////                setDefaultRequested(data);
-//            });
-//            connect(deleteAct, &QAction::triggered, this, [=](){
-////                deleteRequested(data);
-//            });
+            QAction *setDefaultAct = new QAction("设为默认", &menu);
+            QAction *deleteAct = new QAction("删除地址", &menu);
 
-//            // 在鼠标点击位置显示菜单
-//            menu.exec(event->globalPos());
-//    });
+            // 如果已经是默认地址，可以禁用该项
+            if(data.isDefault) setDefaultAct->setEnabled(false);
+
+            // --- 逻辑：设为默认 ---
+            connect(setDefaultAct, &QAction::triggered, this, [=](){
+                // 1. 将所有地址设为非默认
+                for(int i=0; i < addressList.size(); ++i) {
+                    addressList[i].isDefault = false;
+                    addressList[i].saveAddressToLocal(addressList[i]);
+                }
+                // 2. 设置当前地址为默认并保存
+                address updatedData = data;
+                updatedData.isDefault = true;
+                updatedData.saveAddressToLocal(updatedData);
+
+                init(); // 重新加载数据并刷新UI
+            });
+
+            // --- 逻辑：删除 ---
+            connect(deleteAct, &QAction::triggered, this, [=](){
+                auto reply = QMessageBox::question(this, "确认", "确定要删除该地址吗？");
+                if(reply == QMessageBox::Yes) {
+                    address().removeFromLocal(data);
+                    init(); // 重新加载数据并刷新UI
+                }
+            });
+
+            menu.addAction(setDefaultAct);
+            menu.addSeparator();
+            menu.addAction(deleteAct);
+
+            // 在鼠标当前位置弹出
+            menu.exec(card->mapToGlobal(pos));
+        });
+
 }
 
-void addressDialog::setDefaultRequested(address data)
-{
-    for (int i = 0; i < addressList.size(); ++i)
-    {
-        //唯一ID 匹配
-        if (addressList[i].id == data.id) {
-            addressList[i].isDefault = true;
-            address().saveAddressToLocal(addressList[i]);
-        } else {
-            addressList[i].isDefault = false; // 其他设为非默认
+void addressDialog::refreshUi() {
+    // 1. 清空布局
+    QLayoutItem *child;
+    while ((child = m_contentLayout->takeAt(0)) != nullptr) {
+        if (child->widget()) {
+            child->widget()->deleteLater(); // 延迟删除子控件
         }
+        delete child; // 删除布局项本身
     }
-    qDebug() << "已设为默认地址";
-    init();
-}
 
-void addressDialog::deleteRequested(address data)
-{
-    for (int i = 0; i < addressList.size(); ++i)
-    {
-        if (addressList[i].id == data.id) {
-            addressList.removeAt(i);
-            address().removeFromLocal(addressList[i]);
-            break;
-        }
+    // 2. 补回弹簧（非常重要，否则卡片会垂直居中散开）
+    m_contentLayout->addStretch();
+
+    // 3. 重新填入
+    for (const address &addr : addressList) {
+        putAddressToUi(addr);
     }
-    qDebug()<<addressList;
-    init();
 }
 
 void addressDialog::fetchLocationByIP() {
@@ -318,29 +332,45 @@ void addressDialog::clearUi()
     ui->phoneLineEdit->clear();
     ui->detailAddrTextEdit->clear();
     ui->zipCodeLineEdit->clear();
+    currentEditingId = "";
 }
 
-bool addressDialog::isUniqueDefault(address data)
+address addressDialog::getDefaultAddress()
 {
-    if(addressList.length()<=0)
-        return true;
+    address value;
+    for(address data : addressList)
+    {
+        if(data.isDefault == true)
+        {
+            value = data;
+            break;
+        }
+    }
+    return value;
+}
+
+bool addressDialog::isDefaultExists()
+{
     for(address add : addressList)
     {
-        if(data.isDefault == add.isDefault)
-            return false;
+        if(add.isDefault == true)
+            return true;
     }
-    return true;
+    return false;
 }
 
 void addressDialog::save_btn_clicked()
 {
     // 1. 提取 UI 上的所有原始数据
     address data;
+    data.id = data.generateId();
+    qDebug()<<"save_btn_clicked";
     data.fullName = ui->nameLineEdit->text();
     data.phoneNumber = ui->phoneLineEdit->text();
     data.province = ui->province_comboBox->currentText();
     data.city = ui->city_comboBox->currentText();
     data.district = ui->district_comboBox->currentText();
+    data.zipCode = ui->zipCodeLineEdit->text();
     data.detail = ui->detailAddrTextEdit->toPlainText(); // 使用 QTextEdit 获取详细地址
     data.isDefault = ui->defaultCheckBox->checkState();
 
@@ -349,15 +379,28 @@ void addressDialog::save_btn_clicked()
         return;
     }
 
-    if(!isUniqueDefault(data))
-    {
-        QMessageBox::warning(this,"警告","只能存在一个默认地址！");
+//    if(data.isDefault == true && isDefaultExists())
+//    {
+//        QMessageBox::warning(this,"警告","默认地址只能存在一个！");
+//        return;
+//    }
+
+    if (data.isDefault) {
+            // 将本地所有其他地址的 isDefault 设为 false
+            QList<address> all = address().readAllAddressFromLocal();
+            for (address &oldAddr : all) {
+                if (oldAddr.id != data.id && oldAddr.isDefault) {
+                    oldAddr.isDefault = false;
+                    oldAddr.saveAddressToLocal(oldAddr); // 覆盖旧文件
+                }
+            }
+        }
+
+    if(data.id.isEmpty())
         return;
-    }
-    putAddressToUi(data);
-    clearUi();
     data.saveAddressToLocal(data);
-    addressList.push_back(data);
+    clearUi();
+    init();
 }
 
 
