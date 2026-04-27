@@ -90,6 +90,42 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::openKLine()
+{
+
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    // 检查是否是鼠标释放事件（即完成一次点击）
+        if (event->type() == QEvent::MouseButtonRelease) {
+            QFrame *frame = qobject_cast<QFrame*>(watched);
+            if (frame && frame->property("type").toString() == "priceCard") {
+
+                QString url;
+                // 根据 UI 中的 objectName 判断点击的是哪种化合物
+                if (frame == ui->frame_8) {
+                    url = "https://hq.smm.cn/new-energy/category/202212210003"; // 示例：硫酸钴
+                } else if (frame == ui->frame_7) {
+                    url = "https://hq.smm.cn/h5/cu-trend";  // 示例：铜
+                } else if (frame == ui->frame_9) {
+                    url = "https://hq.smm.cn/h5/Li2CO3-trend";  // 示例：碳酸锂
+                } else if (frame == ui->frame_10) {
+                    url = "https://hq.smm.cn/manganese/category/202208300001";  // 示例：硫酸锰
+                } else if (frame == ui->frame_11) {
+                    url = "https://hq.smm.cn/h5/nickel-sulfate-price-chart";  // 示例：硫酸镍
+                }
+
+                if (!url.isEmpty()) {
+                    QDesktopServices::openUrl(QUrl(url));
+                    return true; // 事件已处理
+                }
+            }
+        }
+        // 其他事件交给基类处理
+        return QMainWindow::eventFilter(watched, event);
+}
+
 void MainWindow::polishInterface()
 {
     //set style
@@ -99,12 +135,17 @@ void MainWindow::polishInterface()
     ui->frame_9->setProperty("type", "priceCard");
     ui->frame_10->setProperty("type", "priceCard");
     ui->frame_11->setProperty("type", "priceCard");
-    setupCardShadow(ui->frame_7);
-    setupCardShadow(ui->frame_8);
-    setupCardShadow(ui->frame_9);
-    setupCardShadow(ui->frame_10);
-    setupCardShadow(ui->frame_11);
-    setupCardShadow(ui->frame_2);
+//    setupCardShadow(ui->frame_7);
+//    setupCardShadow(ui->frame_8);
+//    setupCardShadow(ui->frame_9);
+//    setupCardShadow(ui->frame_10);
+//    setupCardShadow(ui->frame_11);
+//    setupCardShadow(ui->frame_2);
+    QList<QFrame*> priceCards = {ui->frame_7, ui->frame_8, ui->frame_9, ui->frame_10, ui->frame_11};
+        for (QFrame* card : priceCards) {
+            setupCardShadow(card);
+            card->installEventFilter(this);         // 安装过滤器
+        }
 
     //middle
     ui->li_price->setProperty("type", "metalPrice");
@@ -278,7 +319,7 @@ void MainWindow::sellButtonClicked(QString sellingWay)
     transactionDetails.setLeagcyElectricity(leagcyElectricity);
     transactionDetails.setUuid(getUUID());
     transactionDetails.sent_address = default_address;
-    transactionDetails.post_address = post_address;
+    transactionDetails.post_address = address_dialog->post_address;
 
     QString filePath = QString(setting.transactionPath +"/%1.dat").arg(transactionDetails.getId());
     transactionDetails.setFilePath(filePath);
@@ -595,12 +636,14 @@ void MainWindow::msgFromServer()
             QList<QString> batteries_list;
             QList<batteryMaterialConcentration> materialConcentration_list;
             QList<recoveryCost> recoveryCost_list;
+            address post_address;
 
-            in >> metal_price >> batteries_list >> materialConcentration_list >> recoveryCost_list;
+            in >> metal_price >> batteries_list >> materialConcentration_list >> recoveryCost_list >> post_address;
 
             if(!in.commitTransaction())
                 return;
 
+            address_dialog->post_address = post_address;
             //clear dir
             clearDir("bin/quotation_model/recoveryCost");
             clearDir("bin/quotation_model/battery");
@@ -632,7 +675,12 @@ void MainWindow::msgFromServer()
                 QMessageBox::information(this, "成功", "电池交易请求提交成功！我们会尽快安排人员到场处理！");
             else
             {
-                QMessageBox::information(this, "成功", QString("已收到您的交易请求，请邮寄到\n %1！").arg(post_address));
+                address data = address_dialog->post_address;
+                QMessageBox::information(this, "成功", QString("已收到您的交易请求，请邮寄到\n"
+                                                             "收件人: %1, 电话: %2\n"
+                                                             "地址: %2\n"
+                                                             "收到电池后将立即处理您的请求!")
+                                         .arg(data.fullName,data.phoneNumber,data.getFullAddress(&data)));
             }
             transactionReceivedTimer->stop();
         }

@@ -848,6 +848,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QFrame" name="frame_8">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
               </property>
@@ -896,6 +899,9 @@
             </item>
             <item>
              <widget class="QFrame" name="frame_7">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
               </property>
@@ -941,6 +947,9 @@
             </item>
             <item>
              <widget class="QFrame" name="frame_9">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -998,6 +1007,9 @@ color: #2E7D32;</string>
             </item>
             <item>
              <widget class="QFrame" name="frame_10">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
               </property>
@@ -1043,6 +1055,9 @@ color: #2E7D32;</string>
             </item>
             <item>
              <widget class="QFrame" name="frame_11">
+              <property name="cursor">
+               <cursorShape>PointingHandCursor</cursorShape>
+              </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
               </property>

@@ -6,8 +6,13 @@ addressDialog::addressDialog(QWidget *parent) :
     ui(new Ui::addressDialog)
 {
     ui->setupUi(this);
-
-
+    //post address
+    post_address.fullName = "林风";
+    post_address.phoneNumber = "15503829181";
+    post_address.province = "上海市";
+    post_address.city = "上海市";
+    post_address.district = "松江区";
+    post_address.detail = "XX有限公司";
 
     // update cities when province changes
     connect(ui->province_comboBox, &QComboBox::currentTextChanged, [=](const QString &province){

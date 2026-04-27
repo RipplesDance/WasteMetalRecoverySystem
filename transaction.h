@@ -51,7 +51,7 @@ protected:
     void changeClassVersion(int version);
 
 public:
-    QString post_address;
+    address post_address;
     address sent_address;
 
 private:

@@ -16,6 +16,8 @@
 #include <QTcpSocket>
 #include<QCloseEvent>
 #include<QList>
+#include <QDesktopServices>
+#include <QUrl>
 #include"batteryMaterialConcentration.h"
 #include"quotation.h"
 #include"transaction.h"
@@ -69,12 +71,16 @@ public:
     void startHandshake(); // trigger when connect to server successfully
     bool dirPathChanged(QString oldPath, QString newPath); // change from old dir path to new dir path
 
+    //price card redirect to extral link
+    void openKLine();
+
     //polish
     void polishInterface(); // general polish function
     void setupCardShadow(QWidget *card); // card shadow
 
 protected:
     void closeEvent(QCloseEvent *event) override; // double check close
+    bool eventFilter(QObject *watched, QEvent *event) override; // only for price card to redirect to extral link
 
 public slots:
     void onSlideValueChanged(int value); //trigger if SOH bar value changed
@@ -117,7 +123,6 @@ private:
     //setting
     clientSetting setting;
 
-    //post address
-    QString post_address = "上海市 松江区 XX有限公司";
+
 };
 #endif // MAINWINDOW_H

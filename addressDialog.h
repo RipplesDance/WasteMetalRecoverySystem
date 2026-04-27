@@ -45,6 +45,10 @@ public:
 public slots:
     void save_btn_clicked();
 
+public:
+    //post address
+    address post_address;
+
 private:
     QVBoxLayout* m_contentLayout;
     Ui::addressDialog *ui;
