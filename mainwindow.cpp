@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(socketConnectingTimer, &QTimer::timeout, this, &MainWindow::socketConnectingTimer_timeout);
 
     transactionReceivedTimer = new QTimer(this);
+    transactionReceivedTimer->setSingleShot(true);
     connect(transactionReceivedTimer, &QTimer::timeout, this, &MainWindow::transactionLost);
 
     connectToServerTimer = new QTimer(this);
@@ -325,11 +326,16 @@ void MainWindow::sellButtonClicked(QString sellingWay)
     transactionDetails.setFilePath(filePath);
 
     transactionReceivedTimer->start(1000* 10);
+    pendingTransctionId = transactionDetails.getId();
+    pendingTransctionFilePath = filePath;
     newTransaction(transactionDetails);
 
     transactionHistory_dialog->init();
 
     init();
+
+    ui->sellButton_online->setEnabled(false);
+    ui->sellButton_offline->setEnabled(false);
 }
 
 void MainWindow::newTransaction(transaction data)
@@ -467,8 +473,25 @@ void MainWindow::frameClicked(QString frameType)
 
 void MainWindow::transactionLost()
 {
-    QMessageBox::critical(this,"错误","订单无法提交！请检查服务器连接状态后重新提交！");
+    if(pendingTransctionFilePath.isEmpty())
+        return;
+    QString filePath = pendingTransctionFilePath;
+    pendingTransctionId.clear();
+    pendingTransctionFilePath.clear();
+
+    QFile file(filePath);
+    if (file.exists()) {
+        if (!file.remove()) {
+            QMessageBox::warning(this, "本地文件删除失败",
+                                 "订单数据已从列表移除，但本地文件删除失败:\n" + filePath);
+        }
+    }
     transactionReceivedTimer->stop();
+    transactionHistory_dialog->init();
+    ui->sellButton_online->setEnabled(true);
+    ui->sellButton_offline->setEnabled(true);
+    QMessageBox::critical(this,"错误","订单无法提交！请检查服务器连接状态后重新提交！");
+
 }
 
 void MainWindow::updateTransaction(transaction data)
@@ -558,13 +581,14 @@ void MainWindow::socketError(QAbstractSocket::SocketError socketError)
     qDebug()<<socketError;
     ui->socketStatus_label->setText("🔴未连接");
     ui->connectBtn->setEnabled(true);
+    isConnectted = false;
 }
 
 void MainWindow::socketDisconnected()
 {
     ui->socketStatus_label->setText("🔴未连接");
     ui->connectBtn->setEnabled(true);
-
+    isConnectted = false;
 }
 
 void MainWindow::socketConnected()
@@ -669,8 +693,20 @@ void MainWindow::msgFromServer()
         }
         else if(order == NEW_TRANSACTION)   //transaction received
         {
+            QString transactionId;
             QString sellingWay;
-            in>>sellingWay;
+            in >> transactionId >> sellingWay;
+            if(!in.commitTransaction())
+                return;
+            if(transactionId != pendingTransctionId || pendingTransctionFilePath.isEmpty())
+                continue;
+
+            transactionReceivedTimer->stop();
+            pendingTransctionId.clear();
+            pendingTransctionFilePath.clear();
+            ui->sellButton_online->setEnabled(true);
+            ui->sellButton_offline->setEnabled(true);
+
             if(sellingWay == "offline")
                 QMessageBox::information(this, "成功", "电池交易请求提交成功！我们会尽快安排人员到场处理！");
             else
@@ -678,11 +714,10 @@ void MainWindow::msgFromServer()
                 address data = address_dialog->post_address;
                 QMessageBox::information(this, "成功", QString("已收到您的交易请求，请邮寄到\n"
                                                              "收件人: %1, 电话: %2\n"
-                                                             "地址: %2\n"
+                                                             "地址: %3\n"
                                                              "收到电池后将立即处理您的请求!")
                                          .arg(data.fullName,data.phoneNumber,data.getFullAddress(&data)));
             }
-            transactionReceivedTimer->stop();
         }
         else if(order == TRANSACTION_STATUS)   //transaction status updated
         {
