@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+    #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -431,7 +431,7 @@ void MainWindow::offFocus()
 
     if(energyDensity > 0 && SOH > 0 && weight>0)
     {
-        ui->leagcyElectricity->setText(QString("剩余%1度电").arg(leagcyElectricity, 0, 'f', 2));
+        ui->leagcyElectricity->setText(QString("剩余%1度电").arg(leagcyElectricity/1000, 0, 'f', 2));
     }
 
     double finalPrice = quo.quotationCaculator(type, energyDensity, weight, SOH);
